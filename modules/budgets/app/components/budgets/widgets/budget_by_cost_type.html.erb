@@ -34,9 +34,10 @@ See COPYRIGHT and LICENSE files for more details.
         flex.with_row do
           render(Primer::Beta::Text.new(color: :subtle, font_size: :small)) do
             if project.children.any?
-              t(".caption_with_subitems", count: budget_count, workspace: project.workspace_label)
+              t(".count_caption_with_subitems.#{project.workspace_type.presence_in(%w[project program portfolio]) || 'project'}",
+                count: budget_count)
             else
-              t(".caption", count: budget_count, workspace: project.workspace_label)
+              t(".count_caption", count: budget_count)
             end
           end
         end

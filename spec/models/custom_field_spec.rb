@@ -44,6 +44,8 @@ RSpec.describe CustomField do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_length_of(:name).is_at_most(256) }
 
+    it_behaves_like "strips invisible characters", :name
+
     describe "uniqueness" do
       describe "WHEN value, locale and type are identical" do
         before do
@@ -640,6 +642,72 @@ RSpec.describe CustomField do
 
       field.destroy
       expect(described_class.where(id: field.id)).not_to exist
+    end
+  end
+
+  describe "can_have_comment? instance and class methods" do
+    context "for project custom field" do
+      let(:instance) { build_stubbed(:project_custom_field) }
+
+      context "for instance" do
+        it { expect(instance).to be_can_have_comment }
+      end
+
+      context "for class" do
+        it { expect(instance.class).to be_can_have_comment }
+      end
+    end
+
+    {
+      wp_custom_field: "work package",
+      user_custom_field: "user",
+      version_custom_field: "version",
+      custom_field: "base"
+    }.each do |factory, name|
+      context "for #{name} custom field" do
+        let(:instance) { build_stubbed(factory) }
+
+        context "for instance" do
+          it { expect(instance).not_to be_can_have_comment }
+        end
+
+        context "for class" do
+          it { expect(instance.class).not_to be_can_have_comment }
+        end
+      end
+    end
+  end
+
+  describe "#comment_for" do
+    let(:field) { build_stubbed(:project_custom_field) }
+    let(:customized) { build_stubbed(:project) }
+
+    before { allow(field).to receive(:comments).and_return(comments) }
+
+    context "when there are no comments" do
+      let(:comments) { [] }
+
+      it "returns nil" do
+        expect(field.comment_for(customized)).to be_nil
+      end
+    end
+
+    context "when comments exist only for other customized" do
+      let(:comments) { [build_stubbed(:custom_comment, customized: build_stubbed(:project), custom_field: field)] }
+
+      it "returns nil" do
+        expect(field.comment_for(customized)).to be_nil
+      end
+    end
+
+    context "when comment exists for the customized" do
+      let(:comment) { build_stubbed(:custom_comment, customized:, custom_field: field) }
+      let(:other_comment) { build_stubbed(:custom_comment, customized: build_stubbed(:project), custom_field: field) }
+      let(:comments) { [other_comment, comment] }
+
+      it "returns the matching comment" do
+        expect(field.comment_for(customized)).to eq(comment)
+      end
     end
   end
 

@@ -59,13 +59,11 @@ See COPYRIGHT and LICENSE files for more details.
       box.with_row do
         render(Primer::Beta::Button.new(
           scheme: :primary,
-          size: :medium,
           tag: :a,
-          href: continue_admin_import_jira_run_path(jira_id: model.jira.id, id: model.id, step: 'import'),
-          data: { turbo_stream: true }
-        )) {
-          I18n.t(:"admin.jira.run.wizard.sections.confirm_import.button_start")
-        }
+          size: :medium,
+          href: import_modal_admin_import_jira_run_path(jira_id: model.jira.id, id: model.id),
+          data: { controller: "async-dialog" }
+        )) { I18n.t(:"admin.jira.run.wizard.sections.confirm_import.button_start") }
       end
     elsif model.in_state?(:import_error)
       box.with_row do

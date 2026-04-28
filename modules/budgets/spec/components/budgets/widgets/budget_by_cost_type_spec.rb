@@ -65,8 +65,19 @@ RSpec.describe Budgets::Widgets::BudgetByCostType, type: :component do
     end
 
     it "displays caption with workspace type (no subitems for leaf project)" do
-      expect(rendered_component).to have_text(/Data aggregated from 1 budget included in this Project\./)
+      expect(rendered_component).to have_text("Data aggregated from 1 budget")
+      expect(rendered_component).to have_no_text(/Project/)
       expect(rendered_component).to have_no_text(/subitems/)
+    end
+
+    it "interpolates count in the one branch" do
+      expect(I18n.t("budgets.widgets.budget_by_cost_type.count_caption", count: 1)).to eq("Data aggregated from 1 budget")
+    end
+
+    it "pluralizes the caption without subitems" do
+      create(:budget, project: project)
+
+      expect(rendered_component).to have_text("Data aggregated from 2 budgets")
     end
 
     it "passes currency attribute" do
@@ -125,9 +136,47 @@ RSpec.describe Budgets::Widgets::BudgetByCostType, type: :component do
     end
 
     it "displays caption with workspace type and subitems" do
-      expect(rendered_component).to have_text(
-        /Data aggregated from 1 budget included in this Project and its subitems\./
-      )
+      expect(rendered_component).to have_text("Data aggregated from 1 budget included in this project and its subitems.")
+    end
+
+    it "pluralizes the project caption with subitems" do
+      create(:budget, project:)
+
+      expect(rendered_component).to have_text("Data aggregated from 2 budgets included in this project and its subitems.")
+    end
+  end
+
+  context "with a program that has children" do
+    let(:project) { create(:program) }
+    let!(:child) { create(:project_with_types, parent: project) }
+    let!(:budget) { create(:budget, project:) }
+    let!(:labor_item) do
+      create(:labor_budget_item,
+             budget: budget,
+             user: current_user,
+             hours: 100,
+             amount: BigDecimal("5000"))
+    end
+
+    it "displays the program-specific caption with subitems" do
+      expect(rendered_component).to have_text("Data aggregated from 1 budget included in this program and its subitems.")
+    end
+  end
+
+  context "with a portfolio that has children" do
+    let(:project) { create(:portfolio) }
+    let!(:child) { create(:project_with_types, parent: project) }
+    let!(:budget) { create(:budget, project:) }
+    let!(:labor_item) do
+      create(:labor_budget_item,
+             budget: budget,
+             user: current_user,
+             hours: 100,
+             amount: BigDecimal("5000"))
+    end
+
+    it "displays the portfolio-specific caption with subitems" do
+      expect(rendered_component).to have_text("Data aggregated from 1 budget included in this portfolio and its subitems.")
     end
   end
 

@@ -160,6 +160,20 @@ RSpec.describe API::V3::WorkPackages::WorkPackageRepresenter do
       let(:value) { work_package.id }
     end
 
+    describe "displayId" do
+      context "when semantic work package ids are active",
+              with_flag: { semantic_work_package_ids: true },
+              with_settings: { work_packages_identifier: "semantic" } do
+        let(:work_package) { build_stubbed(:work_package, identifier: "PROJ-123", project: workspace) }
+
+        it { is_expected.to be_json_eql("PROJ-123".to_json).at_path("displayId") }
+      end
+
+      context "when semantic work package ids are not active" do
+        it { is_expected.to be_json_eql(work_package.id.to_s.to_json).at_path("displayId") }
+      end
+    end
+
     it_behaves_like "API V3 formattable", "description" do
       let(:format) { "markdown" }
       let(:raw) { work_package.description }
@@ -478,20 +492,6 @@ RSpec.describe API::V3::WorkPackages::WorkPackageRepresenter do
 
       context "when user lacks edit permission but has assign_versions" do
         let(:permissions) { all_permissions - [:edit_work_packages] + [:assign_versions] }
-
-        it_behaves_like "has an untitled link" do
-          let(:link) { "update" }
-          let(:href) { api_v3_paths.work_package_form(work_package.id) }
-        end
-
-        it_behaves_like "has an untitled link" do
-          let(:link) { "updateImmediately" }
-          let(:href) { api_v3_paths.work_package(work_package.id) }
-        end
-      end
-
-      context "when user lacks edit permission but has manage_sprint_items" do
-        let(:permissions) { all_permissions - [:edit_work_packages] + [:manage_sprint_items] }
 
         it_behaves_like "has an untitled link" do
           let(:link) { "update" }
@@ -1121,6 +1121,12 @@ RSpec.describe API::V3::WorkPackages::WorkPackageRepresenter do
               .to eq(intermediate.subject)
             expect(work_package).to have_received(:visible_ancestors)
           end
+
+          it "exposes displayId on each ancestor link" do
+            links = parse_json(subject)["_links"]["ancestors"]
+            expect(links[0]["displayId"]).to eq(root.display_id.to_s)
+            expect(links[1]["displayId"]).to eq(intermediate.display_id.to_s)
+          end
         end
 
         context "when ancestors are invisible" do
@@ -1159,6 +1165,10 @@ RSpec.describe API::V3::WorkPackages::WorkPackageRepresenter do
           it do
             expect(parse_json(subject)["_links"]["children"][0]["title"]).to eq(child.subject)
           end
+
+          it "exposes displayId on each child link" do
+            expect(parse_json(subject)["_links"]["children"][0]["displayId"]).to eq(child.display_id.to_s)
+          end
         end
       end
     end
@@ -1179,14 +1189,14 @@ RSpec.describe API::V3::WorkPackages::WorkPackageRepresenter do
       end
     end
 
-      describe "move" do
-        it_behaves_like "has a titled action link" do
-          let(:link) { "move" }
-          let(:href) { "/work_packages/#{work_package.id}/move/new" }
-          let(:permission) { :move_work_packages }
-          let(:title) { "Move work package '#{work_package.subject}'" }
-        end
+    describe "move" do
+      it_behaves_like "has a titled action link" do
+        let(:link) { "move" }
+        let(:href) { "/work_packages/#{work_package.id}/move/new" }
+        let(:permission) { :move_work_packages }
+        let(:title) { "Move work package '#{work_package.subject}'" }
       end
+    end
 
     describe "copy" do
       it_behaves_like "has a titled action link" do

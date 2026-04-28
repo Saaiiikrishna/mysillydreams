@@ -45,11 +45,23 @@ module Backlogs
 
     private
 
+    def http_verb
+      @sprint.new_record? ? :post : :put
+    end
+
+    def form_url
+      if @sprint.new_record?
+        project_backlogs_sprints_path(@sprint.project_id)
+      else
+        project_backlogs_sprint_path(@sprint.project_id, @sprint.id)
+      end
+    end
+
     def data_attributes
       {
         controller: "refresh-on-form-changes",
         "refresh-on-form-changes-target": "form",
-        "refresh-on-form-changes-turbo-stream-url-value": refresh_form_project_sprints_path(@sprint.project_id)
+        "refresh-on-form-changes-turbo-stream-url-value": refresh_form_project_backlogs_sprints_path(@sprint.project_id)
       }
     end
   end

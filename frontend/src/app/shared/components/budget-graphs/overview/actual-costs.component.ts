@@ -77,7 +77,7 @@ export class ActualCostsComponent {
     },
     plugins: {
       ...chartLegend,
-      'primer-colors': { labelBased: true },
+      'primer-colors': { datasetLabelBased: true },
       tooltip: {
         enabled: false,
         external: createBarTooltipRenderer(this.formatCurrency.bind(this)),

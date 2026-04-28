@@ -323,6 +323,12 @@ RSpec.describe PermittedParams do
 
       it_behaves_like "allows params"
     end
+
+    context "with identifier" do
+      let(:hash) { { "name" => "Brand New Project", "workspace_type" => "project", "identifier" => "BNP" } }
+
+      it_behaves_like "allows params"
+    end
   end
 
   describe "#copy_project_options" do
@@ -545,6 +551,12 @@ RSpec.describe PermittedParams do
 
     describe "budget_id" do
       let(:hash) { { "budget_id" => "1" } }
+
+      it_behaves_like "allows params"
+    end
+
+    describe "sprint_id" do
+      let(:hash) { { "sprint_id" => "1" } }
 
       it_behaves_like "allows params"
     end
