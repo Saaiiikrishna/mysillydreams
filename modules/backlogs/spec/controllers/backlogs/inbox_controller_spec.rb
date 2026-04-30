@@ -141,16 +141,18 @@ RSpec.describe Backlogs::InboxController do
 
   describe "PUT #move" do
     let(:sprint) { create(:sprint, name: "Sprint 1", project:) }
-    let(:target_id) { "sprint:#{sprint.id}" }
-    let(:prev_id) { 1 }
+    let(:list_type) { "sprint" }
+    let(:list_id) { sprint.id }
+    let(:prev_item_id) { 1 }
 
     subject do
       put :move,
           params: {
             project_id: project.id,
             id: work_package.id,
-            target_id:,
-            prev_id:
+            list_type:,
+            list_id:,
+            prev_item_id:
           },
           format: :turbo_stream
     end
@@ -169,8 +171,9 @@ RSpec.describe Backlogs::InboxController do
     end
 
     context "when reordering within the Inbox" do
-      let(:target_id) { "inbox" }
-      let(:prev_id) { work_packages.first.id }
+      let(:list_type) { "inbox" }
+      let(:list_id) { nil }
+      let(:prev_item_id) { work_packages.first.id }
 
       it "replaces only the inbox component without a flash", :aggregate_failures do
         expect(response).to be_successful
@@ -191,7 +194,7 @@ RSpec.describe Backlogs::InboxController do
 
     context "when no prev_id is provided" do
       let!(:work_packages) { create_list(:work_package, 5, project:, sprint:) }
-      let(:prev_id) { nil }
+      let(:prev_item_id) { nil }
 
       it "places the work package at the top of the sprint" do
         expect { work_package.reload }
@@ -209,16 +212,18 @@ RSpec.describe Backlogs::InboxController do
       end
 
       let!(:work_packages) { create_list(:work_package, 5, project:) }
-      let(:target_id) { "inbox" }
-      let(:prev_id) { work_packages.first.id }
+      let(:list_type) { "inbox" }
+      let(:list_id) { nil }
+      let(:prev_item_id) { work_packages.first.id }
 
       subject do
         put :move,
             params: {
               project_id: project.id,
               id: work_package.id,
-              target_id:,
-              prev_id:,
+              list_type:,
+              list_id:,
+              prev_item_id:,
               all: "1"
             },
             format: :turbo_stream

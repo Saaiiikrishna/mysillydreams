@@ -36,17 +36,15 @@ module Backlogs
     private
 
     def move_attributes_from_target
-      target_type, target_id = move_params[:target_id].split(":", 2)
-
-      case target_type
+      case move_params[:list_type]
       when "sprint"
-        { backlog_bucket_id: nil, sprint_id: target_id }
+        { backlog_bucket_id: nil, sprint_id: move_params[:list_id] }
       when "backlog_bucket"
-        { backlog_bucket_id: target_id, sprint_id: nil }
+        { backlog_bucket_id: move_params[:list_id], sprint_id: nil }
       when "inbox"
         { backlog_bucket_id: nil, sprint_id: nil }
       else
-        raise ArgumentError, "target_type must be one of: backlog_bucket, sprint, inbox."
+        raise ArgumentError, "list_type must be one of: backlog_bucket, sprint, inbox."
       end
     end
   end

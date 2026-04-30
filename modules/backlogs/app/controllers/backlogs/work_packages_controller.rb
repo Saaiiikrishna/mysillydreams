@@ -170,13 +170,17 @@ module Backlogs
     end
 
     def move_params
-      params.require(%i[target_id])
-      params.permit(:position, :prev_id, :target_id)
+      params.require(%i[list_type])
+      params.permit(:position, :prev_item_id, :list_type, :list_id)
     end
 
     def position_attributes
-      if move_params.has_key?(:prev_id)
-        { prev_id: move_params[:prev_id].to_i }
+      if move_params.has_key?(:prev_item_id)
+        if move_params[:prev_item_id].present?
+          { prev_id: move_params[:prev_item_id].to_i }
+        else
+          { position: 1 }
+        end
       elsif move_params.has_key?(:position)
         { position: move_params[:position].to_i }
       else

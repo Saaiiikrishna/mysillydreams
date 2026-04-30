@@ -116,8 +116,9 @@ RSpec.describe Backlogs::WorkPackagesController do
                      project_id: project.id,
                      sprint_id: sprint.id,
                      id: story_in_sprint.id,
-                     target_id: "sprint:#{other_sprint.id}",
-                     prev_id: nil
+                     list_type: "sprint",
+                     list_id: other_sprint.id,
+                     prev_item_id: nil
                    },
                    format: :turbo_stream
 
@@ -142,8 +143,8 @@ RSpec.describe Backlogs::WorkPackagesController do
                      project_id: project.id,
                      sprint_id: sprint.id,
                      id: story_in_sprint.id,
-                     target_id: "inbox",
-                     prev_id: existing_inbox_item.id
+                     list_type: "inbox",
+                     prev_item_id: existing_inbox_item.id
                    },
                    format: :turbo_stream
 
@@ -172,8 +173,8 @@ RSpec.describe Backlogs::WorkPackagesController do
                        project_id: project.id,
                        sprint_id: sprint.id,
                        id: story_in_sprint.id,
-                       target_id: "inbox",
-                       prev_id: existing_inbox_item.id,
+                       list_type: "inbox",
+                       prev_item_id: existing_inbox_item.id,
                        all: "1"
                      },
                      format: :turbo_stream
@@ -201,7 +202,8 @@ RSpec.describe Backlogs::WorkPackagesController do
                      project_id: project.id,
                      sprint_id: sprint.id,
                      id: story_in_sprint.id,
-                     target_id: "sprint:#{other_sprint.id}",
+                     list_type: "sprint",
+                     list_id: other_sprint.id,
                      position: 1
                    },
                    format: :turbo_stream
