@@ -108,7 +108,13 @@ function buildWidget():HTMLElement {
   span.setAttribute('contenteditable', 'false');
   // Reuse the same translated string the body-level ExternalLinksController
   // references via aria-describedby, keeping i18n centralised in Rails.
-  span.textContent = readDescription();
+  // Captured at decoration-creation time, so a mid-session locale change
+  // keeps stale text until the next rebuild. Leading NBSP is a separator
+  // for the link's computed accessible name — without it, AT can announce
+  // "Link textOpen link in a new tab" because descendant text-node
+  // concatenation isn't guaranteed to insert whitespace, especially in
+  // contenteditable.
+  span.textContent = `\u00A0${readDescription()}`;
   return span;
 }
 

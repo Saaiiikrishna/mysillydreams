@@ -88,7 +88,11 @@ RSpec.describe "External links in BlockNote editor",
     # ignore in edit mode.
     link = editor.shadow_root.find("a[target='_blank']", text: "Accessible Link", wait: 5)
     hint = link.find("span.sr-only", visible: :all)
-    expect(hint.text(:all)).to eq(I18n.t(:open_link_in_a_new_tab))
+    # The widget text is prefixed with a separator (NBSP) so the link's
+    # computed accessible name doesn't concatenate as "Accessible LinkOpen…".
+    # We assert containment rather than equality so the separator detail
+    # stays an implementation concern of the extension, not the spec.
+    expect(hint.text(:all)).to include(I18n.t(:open_link_in_a_new_tab))
   end
 
   it "emits exactly one hint when a link spans multiple inline nodes" do
@@ -109,7 +113,7 @@ RSpec.describe "External links in BlockNote editor",
     link = editor.shadow_root.find("a[target='_blank']", text: /hello\s*world/, wait: 5)
     hints = link.all("span.sr-only", visible: :all)
     expect(hints.size).to eq(1)
-    expect(hints.first.text(:all)).to eq(I18n.t(:open_link_in_a_new_tab))
+    expect(hints.first.text(:all)).to include(I18n.t(:open_link_in_a_new_tab))
   end
 
   it_behaves_like "does not freeze when pasting multiple external links"
