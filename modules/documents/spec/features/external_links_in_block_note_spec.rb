@@ -118,6 +118,46 @@ RSpec.describe "External links in BlockNote editor",
 
   it_behaves_like "does not freeze when pasting multiple external links"
 
+  it "leaves no orphan hint when a linked range is deleted in one transaction" do
+    editor.paste_links(text: "Doomed Link", url: "https://example.com")
+    link = editor.shadow_root.find("a[target='_blank']", text: "Doomed Link", wait: 5)
+    expect(link).to have_css("span.sr-only", visible: :all)
+
+    # Regression: a single-transaction delete of a linked range must
+    # leave no orphan widget. The widget is registered with `side: -1`,
+    # so PM's `WidgetType.map` resolves its position with `assoc = -1`
+    # when the link is replaced with an empty slice, finds the anchor
+    # inside the deleted content, and reports `deleted: true`. PM drops
+    # the decoration automatically — no rebuild in this plugin is
+    # needed.
+    #
+    # If `side`, the apply gate, or buildDecorations ever stops
+    # preserving this, a phantom empty <a> with the sr-only hint would
+    # survive at the deletion seam and screen readers would announce a
+    # link to nowhere. This test fails before that ships.
+    #
+    # Selection uses a DOM Range over the link's text node (the widget
+    # span is contenteditable=false and excluded). Delete goes through
+    # the W3C actions API because Selenium's send_keys doesn't
+    # propagate Backspace/Delete to PM's editable in this shadow-DOM
+    # setup.
+    page.execute_script(<<~JS)
+      const root = document.querySelector('op-block-note').shadowRoot;
+      const a = root.querySelector('a[target="_blank"]');
+      const textNode = [...a.childNodes].find((n) => n.nodeType === 3);
+      const range = document.createRange();
+      range.setStart(textNode, 0);
+      range.setEnd(textNode, textNode.textContent.length);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    JS
+    page.driver.browser.action.send_keys(:delete).perform
+
+    expect(editor.element).to have_no_css("a[target='_blank']", visible: :all)
+    expect(editor.element).to have_no_css("span.sr-only", visible: :all)
+  end
+
   it "does not rewrite internal links or attach the sr-only hint" do
     editor.paste_links(text: "Internal Link", url: root_url)
 

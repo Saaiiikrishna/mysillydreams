@@ -176,15 +176,6 @@ function sliceContainsLinkMark(slice:Slice):boolean {
  * widget at the end of each run rides along correctly via decoration
  * mapping. The expensive doc walk is only needed when a step adds,
  * removes, or moves a link mark.
- *
- * Limitation: deleting a whole link's text leaves the slice empty, and
- * we don't have cheap access to the old range here to detect that the
- * removed range carried a link mark. The orphaned widget gets cleaned
- * up by the next link-affecting transaction (e.g. typing nearby with a
- * stored link mark, or any subsequent paste). The visible cost between
- * those events is a sr-only span at a position that no longer has a
- * link wrapper around it — invisible to sighted users, briefly noisy
- * for screen readers if they navigate before the next rebuild.
  */
 function stepAffectsLinks(step:Step):boolean {
   if (step instanceof AddMarkStep || step instanceof RemoveMarkStep) {
