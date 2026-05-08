@@ -136,7 +136,7 @@ en:
         title: "Beta - Try it out!"
         description: "This Jira Migrator is currently in beta. We currently only support Jira Server/Data Center versions 10.x and 11.x. Cloud instances are not supported at this time."
         contribution_callout: >
-          Please, help us improve the Jira Migrator with your feedback and private data donations. You can [join the development community](link) of the Jira Migrator. 
+          Please, help us improve the Jira Migrator with your feedback and private data donations. You can [join the development community](link) of the Jira Migrator.
         supported_versions: ""
       form:
         fields:
@@ -3519,6 +3519,14 @@ en:
       xls2csv: "Xls2csv available (optional)"
       catppt: "Catppt available (optional)"
       tesseract: "Tesseract available (optional)"
+
+  header_project_select:
+    all_projects: "All projects"
+    favorites: "Favorites"
+    leave_project: "Leave project"
+    new_project: "New project"
+    title: "Projects"
+    trigger_no_project: "Select a project"
 
   filterable_tree_view:
     filter_mode:
