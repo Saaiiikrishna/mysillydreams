@@ -126,8 +126,12 @@ zh-TW:
         title: Jira configuration
         new: New configuration
       banner:
-        title: Limited import capabilities
-        description: 'This Jira Migrator is currently in beta and can only import basic data: projects, issues (name, title, description, attachments), users (name, email, project membership), statuses, and types. It cannot import workflows, custom fields, issue relations, or permissions. We currently only support Jira Server/Data Center versions 10.x and 11.x. Cloud instances are not supported at this time.'
+        title: Beta - Try it out!
+        description: This Jira Migrator is currently in beta. We currently only support Jira Server/Data Center versions 10.x and 11.x. Cloud instances are not supported at this time.
+        contribution_callout: 'Please, help us improve the Jira Migrator with your feedback and private data donations. You can [join the development community](link) of the Jira Migrator.
+
+          '
+        supported_versions: ''
       form:
         fields:
           name: Name
@@ -236,8 +240,10 @@ zh-TW:
               caption_done: Completed
               label_info: Please note that this import tool is in beta and cannot import all types of data. Here is a summary of what the host Jira instance offers for import and what this tool is able to import right now.
               description: Select what data you want to import from the available data fetched from the host Jira instance.
-              label_available_data: Available data
-              label_not_available_data: Not available for import
+              label_supported_data: Supported data
+              label_coming_soon: Coming soon (Q2 2026)
+              label_coming_later: Coming later
+              label_available_server_data: Available data on %{server_info}
               button_select_projects: Select projects to import
               button_continue: Continue
               label_import: Select which projects you would like to import.
@@ -246,16 +252,22 @@ zh-TW:
               label_progress: Fetching data from Jira...
               elements:
                 relations: Relations between issues
+                project_ids: Project identifiers
+                issue_ids: Issues identifiers
+                sprints: Sprint assignments
                 workflows: Project-level workflows
-                users: Users
-                sprints: Sprints
                 schemes: Schemas
-                permissions: User, group and project permissions
+                permissions: Permissions
+                projects: Projects
+                issues: Issues
+                issue_details: Issue description, history, comments and attachments
+                custom_fields: A subset of custom fields
+                users: Involved users and groups
             confirm_import:
               title: Import data
               caption: Review your import settings and start the import
               caption_done: Completed
-              label_available_data: Available data to import
+              label_available_data: Data to be imported
               label_users_import_explanation: Users that are involved in selected projects (group memberships included)
               button_start: Start import
               description: You are about to start an import run with the following settings.
@@ -264,33 +276,33 @@ zh-TW:
             import_result:
               title: Import run results
               caption: Review import run or revert import
-              info: Import run successful.
+              info: Import run was successful.
               label_results: Imported
               label_revert: Revert import
               button_revert: Revert import
-              button_done: Finalize import
-              preview_description: The imported data is currently in review mode. Click "Finalize import" to make the import permanent or "Revert import" to undo all changes made in this import run.
-              label_finalize_import: Finalize import
-              label_finalizing: Finalizing import...
-              label_finalizing_done: Import finalized.
+              button_done: Approve import
+              preview_description: The imported data is currently in review mode. Click "Approve import" to make the import permanent or "Revert import" to undo all changes made in this import run.
+              label_finalize_import: Approve import
+              label_finalizing: Approving import...
+              label_finalizing_done: Import approved.
               label_revert_progress: Reverting import...
               label_reverted: Import reverted.
           select_dialog:
             filter_projects: Filter by text
           import_dialog:
-            title: Start this import?
+            title: Please make sure you have a backup!
             confirm_button: Start import
-            description: 'This importer is an alpha feature. It is not yet able to import all data from Jira and might leave incomplete data on this OpenProject instance. <b>Do not use a production environment and create a backup of your OpenProject data before starting.</b>
+            description: 'Imports change your OpenProject configuration. After the import you will have the opportunity to review the changes. While in review, you have an option to revert or approve the import. After approving the import reverting will no longer be possible. Therefore, please, make sure that you have [a backup of your OpenProject instance](link) before proceeding.
 
               '
-            confirm: I understand and made the necessary preparations
+            confirm: I understand and have a backup
           revert_dialog:
             title: Permanently revert this import?
-            description: This will delete all imported objects (including whole projects) even if there was user activity in those projects after the import on OpenProject.
+            description: This will delete all imported objects (including whole projects).
             confirm: I understand that this reversion will delete data permanently
           finalize_dialog:
-            title: Finalize this import?
-            description: Once finalized, this import can no longer be reverted. All imported data will become permanently imported.
+            title: Approve this import?
+            description: Once approved, this import can no longer be reverted. All imported data will become permanent.
             confirm: I understand that this action cannot be undone
             confirm_button: Understood
           select_projects:
@@ -441,8 +453,11 @@ zh-TW:
         ignore: Ignore changes
         save: Save changes and continue
       role_selector:
+        title: Select roles
         label: 'Role: %{role}'
         no_role: Select role
+        roles:
+          other: "%{count} roles selected"
       blankslate:
         title: No status transitions configured
         description: Add statuses to start configuring workflows for this role
@@ -1084,6 +1099,8 @@ zh-TW:
       no_results_title_text: 目前沒有新消息報告
       no_results_content_text: 新增一個消息
   roles:
+    edit:
+      default_for_new_projects_warning: 'This role is configured as the default role given to non-admin users who create a project. Do not remove the following permissions, otherwise project creators will be unable to complete the setup of their newly created projects:'
     permissions:
       section_check_all_label: 指定所有 %{module} 權限
       section_uncheck_all_label: 取消指定所有 %{module} 權限
@@ -1095,6 +1112,8 @@ zh-TW:
       matrix_check_uncheck_all_in_row_label_html: 切換 <em>%{permission}</em>所有角色的權限
       matrix_check_uncheck_all_in_col_label_html: 切換所有 %{module} 的權限 <em>%{role}</em>角色
   users:
+    force_password_change_hint: The user must set a new password on their next login. Automatically enabled when sending credentials via email.
+    send_information_hint: Emails the password in plain text. When checked, the user will be required to change their password on first login.
     autologins:
       prompt: 保持登入%{num_days}
     sessions:
@@ -2485,6 +2504,7 @@ zh-TW:
       unsupported_storage_type: 不是支援的儲存類型。
       storage_error: 儲存連線出錯。
       invalid_input: 輸入無效。
+      invalid_child_for_parent: is not allowed as a parent for this view type.
   activity:
     item:
       created_by_on: 由 %{user} 於 %{datetime} 新增
@@ -3334,6 +3354,24 @@ zh-TW:
   general_text_false: 否
   gui_validation_error: 1 錯誤
   gui_validation_error_plural: "%{count} 個錯誤"
+  health_reports:
+    report_component:
+      checks:
+        failures:
+          other: "%{count} checks failed"
+        success: All checks passed
+        warnings:
+          other: "%{count} checks returned a warning"
+      summary:
+        failure: Some checks failed and the system does not work as expected.
+        success: All connections and systems are working as expected.
+        warning: Some checks returned a warning. This can lead to unexpected behaviour.
+    result_component:
+      status:
+        failed: Failed
+        passed: Passed
+        skipped: Skipped
+        warning: Warning
   homescreen:
     additional:
       projects: 最新的可見專案
@@ -3347,18 +3385,17 @@ zh-TW:
         header: 閱讀關於新功能和產品更新的資訊。
         learn_about: 進一步瞭解所有新功能
         missing: 目前還沒有突出顯示的功能。
-        '17_3':
+        '17_4':
           new_features_title: 'The release contains various new features and improvements, such as:
 
             '
           new_features_list:
-            line_0: 'Big Agile update: dedicated sprint objects, all work packages visible on Backlogs, and automatic sprint board creation.'
-            line_1: In-place editing of project attributes on the Project Overview page.
-            line_2: Sharing of meeting templates (Basic plan and higher).
-            line_3: Better search in Time and Costs, Boards, and more.
-            line_4: Option to safely change project identifiers.
-            line_5: Improved workflow configuration for administrators.
-            line_6: Action boards released to Community.
+            line_0: Jira Migrator with support for basic custom fields.
+            line_1: Backlog buckets for structuring and prioritizing work packages during backlog refinement.
+            line_2: Easier drag and drop and improved move options in the Backlogs module.
+            line_3: Sprint Start and Complete buttons in the sprint header.
+            line_4: Copy workflow settings between roles.
+            line_5: "'My Meetings' widget on the Home and Project Overview pages."
     links:
       upgrade_enterprise_edition: 升級到企業版
       postgres_migration: 將您的安裝遷移到 PostgreSQL
@@ -3636,6 +3673,7 @@ zh-TW:
   label_age: 年齡
   label_ago: 天前
   label_all: 所有
+  label_all_uppercase: All
   label_all_time: 所有的時間
   label_all_words: 所以的詞
   label_all_open_wps: 所有「未關閉」工作套件
@@ -4163,6 +4201,7 @@ zh-TW:
   label_role_new: 新增角色
   label_role_grantable: 可授予的角色
   label_role_plural: 角色
+  label_role_missing_permissions: "%{role} (missing required permissions)"
   label_role_search: 為新成員分配角色
   label_scm: SCM
   label_scroll_left: 向左捲動
@@ -4386,7 +4425,7 @@ zh-TW:
       you_have: 你擁有
     logo_alt_text: 商標
     mention:
-      subject: "%{user_name} 在「 #%{id} - %{subject} 」提到您"
+      subject: "%{user_name} mentioned you in %{id} - %{subject}"
     notification:
       center: 顯示通知中心
       see_in_center: 詳見通知中心留言
@@ -4423,10 +4462,10 @@ zh-TW:
       note: 備註： "%{note}"
     sharing:
       work_packages:
-        allowed_actions_html: You may %{allowed_actions} this work package. This can change depending on your project role and permissions.
+        allowed_actions_html: 'You have the following permissions on this work package: %{allowed_actions}. This can change depending on your project role and permissions.'
         create_account: 要存取此工作套件，您需要建立一個 %{instance} 帳戶。
         open_work_package: 開啟工作套件
-        subject: '有個工作套件 #%{id} 與您共同參與'
+        subject: Work package %{id} was shared with you
         enterprise_text: 與不是專案成員的使用者共同參與工作套件。
         summary:
           user: '%{user} 將一個工作套件邀請您參與，權限：%{role_rights}"'
@@ -4638,6 +4677,18 @@ zh-TW:
     text_getting_started_description: 快速瞭解 OpenProject 的項目管理和團隊協作。您可以從幫助菜單重新啓動此視頻。
     welcome: 歡迎使用 %{app_title}
     select_language: 請選擇您的語言
+  open_project:
+    common:
+      work_package_card_component:
+        menu:
+          label_actions: Work package actions
+      work_package_card_box_component:
+        header:
+          label_actions: Open menu
+          label_work_package_count:
+            zero: No work packages
+            one: "%{count} work package"
+            other: "%{count} work packages"
   permission_add_work_package_comments: 增加留言
   permission_add_work_packages: 新增工作套件
   permission_add_messages: 張貼訊息
@@ -4655,7 +4706,6 @@ zh-TW:
   permission_add_work_package_watchers: 新增監看者
   permission_assign_versions: 指派版本
   permission_browse_repository: 唯讀版本庫 (瀏覽和 Checkout)
-  permission_change_wiki_parent_page: 更改上層 Wiki 頁面
   permission_change_work_package_status: 變更工作套件狀態
   permission_change_work_package_status_explanation: 允許在無編輯工作套件權限的情況下更改狀態
   permission_comment_news: 在「最新消息」留言
@@ -4670,8 +4720,6 @@ zh-TW:
   permission_delete_own_messages: 刪除自己張貼的訊息
   permission_delete_reportings: 刪除報表
   permission_delete_timelines: 刪除時間軸
-  permission_delete_wiki_pages: 刪除維基頁面
-  permission_delete_wiki_pages_attachments: 刪除附件
   permission_edit_work_package_comments: 審閱留言
   permission_edit_work_package_comments_explanation: 注意：擁有此權限的使用者可以編輯任何人的註解。
   permission_edit_work_packages: 編輯工作套件
@@ -4691,12 +4739,10 @@ zh-TW:
   permission_edit_wiki_pages: 編輯維基頁面
   permission_export_work_packages: 匯出工作套件
   permission_export_projects: 匯出專案
-  permission_export_wiki_pages: 匯出維基頁面
   permission_invite_members_by_email: 透過電子郵件邀請會員
   permission_invite_members_by_email_explanation: '允許使用者透過電子郵件邀請新會員。受邀的使用者會收到一封電子郵件，內含設定密碼和啟動帳戶的連結。取決於管理會員的權限
 
     '
-  permission_list_attachments: 列出附件
   permission_log_own_time: 記錄個人耗時
   permission_log_time: 紀錄他人耗時
   permission_manage_forums: 管理討論區
@@ -4711,7 +4757,6 @@ zh-TW:
   permission_manage_subtasks: 管理工作套件階層
   permission_manage_versions: 管理版本
   permission_manage_wiki: 管理維基
-  permission_manage_wiki_menu: 管理維基選單
   permission_manage_own_working_times: Manage own working times
   permission_manage_own_working_times_explanation: 'Allows users to manage their own working times, and personal non-working days.
 
@@ -4721,8 +4766,6 @@ zh-TW:
 
     '
   permission_move_work_packages: 移動工作套件
-  permission_protect_wiki_pages: 專案維基頁面
-  permission_rename_wiki_pages: 重新命名維基頁面
   permission_save_queries: 儲存版面
   permission_search_project: 搜尋專案
   permission_select_custom_fields: 選擇客製欄位
@@ -5097,6 +5140,9 @@ zh-TW:
   setting_mail_handler_body_delimiter_regex: 清空符合正規表達式的電子郵件
   setting_mail_handler_ignore_filenames: 依附件名稱排除
   setting_new_project_user_role_id: 非管理員用户新建專案時將被赋予的（在該專案中的）角色
+  setting_new_project_user_role_id_caption: 'Only roles that include the permissions to edit project attributes and to manage members are listed, so that the creator can complete the project setup.
+
+    '
   setting_new_project_send_confirmation_email: 建立新專案時傳送通知給作者
   setting_new_project_notification_text: 通知文字
   setting_password_active_rules: Password requirements
@@ -5517,6 +5563,7 @@ zh-TW:
   text_project_identifier_format: Must start with a lowercase letter. Only lowercase letters (a-z), numbers, dashes and underscores are allowed.
   text_reassign: 重新指派到工作套件：
   text_regexp_multiline: 這個正規表達式套用在多行模式。 e.g., ^---\s+
+  text_rename_wiki_page: Rename wiki page
   text_repository_usernames_mapping: |-
     選擇或更新與版本庫中的帳號所對應的OpenProject使用者。
     版本庫中與OpenProject的使用者具有相同名稱或email將被自動對應。
@@ -5695,10 +5742,13 @@ zh-TW:
           same_as_work: 設定與工時相同值。
     permissions:
       comment: 留言
+      comment_verb: comment
       comment_description: 可查看此工作套件與留言。
       edit: 編輯
+      edit_verb: edit
       edit_description: 可以查看，留言與編輯此工作套件。
       view: 檢視
+      view_verb: view
       view_description: 查看此工作套件。
     reminders:
       label_remind_at: 日期
@@ -5952,8 +6002,6 @@ zh-TW:
       scopes: 權限
       successful_application_revocation: 已成功撤銷應用程序 %{application_name}。
       none_given: 沒有 OAuth 應用程序已獲得訪問您的用戶帳戶的權限。
-    x_active_tokens:
-      other: "%{count} 已啟用令牌(Token)"
     flows:
       authorization_code: 授權碼流程
       client_credentials: 客戶端憑據流
@@ -5963,8 +6011,9 @@ zh-TW:
     client_credentials_impersonation_html: '默認情況下，OpenProject 通過 %{authorization_code_flow_link} 提供 OAuth 2.0 授權。您可以選擇啓用 %{client_credentials_flow_link}，但您必須提供代其執行請求的用戶。
 
       '
+    confirm_revoke_my_application:
+      other: Do you really want to remove this application? This will revoke %{count} tokens active for it.
     authorization_error: 授權錯誤。
-    revoke_my_application_confirmation: 確定想要移除此應用程序嗎？這將撤銷對其有效的 %{token_count}。
     my_registered_applications: 已註冊的 OAuth 應用程式
   oauth_client:
     urn_connection_status:

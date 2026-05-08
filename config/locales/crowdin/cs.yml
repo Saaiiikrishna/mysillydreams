@@ -126,8 +126,12 @@ cs:
         title: Jira configuration
         new: Nová konfigurace
       banner:
-        title: Limited import capabilities
-        description: 'This Jira Migrator is currently in beta and can only import basic data: projects, issues (name, title, description, attachments), users (name, email, project membership), statuses, and types. It cannot import workflows, custom fields, issue relations, or permissions. We currently only support Jira Server/Data Center versions 10.x and 11.x. Cloud instances are not supported at this time.'
+        title: Beta - Try it out!
+        description: This Jira Migrator is currently in beta. We currently only support Jira Server/Data Center versions 10.x and 11.x. Cloud instances are not supported at this time.
+        contribution_callout: 'Please, help us improve the Jira Migrator with your feedback and private data donations. You can [join the development community](link) of the Jira Migrator.
+
+          '
+        supported_versions: ''
       form:
         fields:
           name: Name
@@ -254,8 +258,10 @@ cs:
               caption_done: Completed
               label_info: Please note that this import tool is in beta and cannot import all types of data. Here is a summary of what the host Jira instance offers for import and what this tool is able to import right now.
               description: Select what data you want to import from the available data fetched from the host Jira instance.
-              label_available_data: Available data
-              label_not_available_data: Not available for import
+              label_supported_data: Supported data
+              label_coming_soon: Coming soon (Q2 2026)
+              label_coming_later: Coming later
+              label_available_server_data: Available data on %{server_info}
               button_select_projects: Select projects to import
               button_continue: Continue
               label_import: Select which projects you would like to import.
@@ -264,16 +270,22 @@ cs:
               label_progress: Fetching data from Jira...
               elements:
                 relations: Relations between issues
+                project_ids: Project identifiers
+                issue_ids: Issues identifiers
+                sprints: Sprint assignments
                 workflows: Project-level workflows
-                users: Uživatelé
-                sprints: Sprinty
                 schemes: Schémata
-                permissions: User, group and project permissions
+                permissions: Permissions
+                projects: Projects
+                issues: Issues
+                issue_details: Issue description, history, comments and attachments
+                custom_fields: A subset of custom fields
+                users: Involved users and groups
             confirm_import:
               title: Import dat
               caption: Review your import settings and start the import
               caption_done: Completed
-              label_available_data: Available data to import
+              label_available_data: Data to be imported
               label_users_import_explanation: Users that are involved in selected projects (group memberships included)
               button_start: Start import
               description: You are about to start an import run with the following settings.
@@ -282,33 +294,33 @@ cs:
             import_result:
               title: Import run results
               caption: Review import run or revert import
-              info: Import run successful.
+              info: Import run was successful.
               label_results: Importováno
               label_revert: Revert import
               button_revert: Revert import
-              button_done: Finalize import
-              preview_description: The imported data is currently in review mode. Click "Finalize import" to make the import permanent or "Revert import" to undo all changes made in this import run.
-              label_finalize_import: Finalize import
-              label_finalizing: Finalizing import...
-              label_finalizing_done: Import finalized.
+              button_done: Approve import
+              preview_description: The imported data is currently in review mode. Click "Approve import" to make the import permanent or "Revert import" to undo all changes made in this import run.
+              label_finalize_import: Approve import
+              label_finalizing: Approving import...
+              label_finalizing_done: Import approved.
               label_revert_progress: Reverting import...
               label_reverted: Import reverted.
           select_dialog:
             filter_projects: Filtrovat podle textu
           import_dialog:
-            title: Start this import?
+            title: Please make sure you have a backup!
             confirm_button: Start import
-            description: 'This importer is an alpha feature. It is not yet able to import all data from Jira and might leave incomplete data on this OpenProject instance. <b>Do not use a production environment and create a backup of your OpenProject data before starting.</b>
+            description: 'Imports change your OpenProject configuration. After the import you will have the opportunity to review the changes. While in review, you have an option to revert or approve the import. After approving the import reverting will no longer be possible. Therefore, please, make sure that you have [a backup of your OpenProject instance](link) before proceeding.
 
               '
-            confirm: Rozumím a provedl(a) jsem nezbytné přípravy
+            confirm: I understand and have a backup
           revert_dialog:
             title: Permanently revert this import?
-            description: This will delete all imported objects (including whole projects) even if there was user activity in those projects after the import on OpenProject.
+            description: This will delete all imported objects (including whole projects).
             confirm: I understand that this reversion will delete data permanently
           finalize_dialog:
-            title: Finalize this import?
-            description: Once finalized, this import can no longer be reverted. All imported data will become permanently imported.
+            title: Approve this import?
+            description: Once approved, this import can no longer be reverted. All imported data will become permanent.
             confirm: Beru na vědomí, že tento úkon nelze vzít zpět
             confirm_button: Rozumím
           select_projects:
@@ -465,8 +477,14 @@ cs:
         ignore: Ignorovat změny
         save: Uložit změny a pokračovat
       role_selector:
+        title: Select roles
         label: 'Role: %{role}'
         no_role: Vybrat roli
+        roles:
+          one: "%{count} role selected"
+          few: "%{count} roles selected"
+          many: "%{count} roles selected"
+          other: "%{count} roles selected"
       blankslate:
         title: Nejsou nakonfigurovány žádné stavové přechody
         description: Add statuses to start configuring workflows for this role
@@ -1129,6 +1147,8 @@ cs:
       no_results_title_text: V současné době neexistují žádné zprávy k zobrazení.
       no_results_content_text: Přidat příspěvek
   roles:
+    edit:
+      default_for_new_projects_warning: 'This role is configured as the default role given to non-admin users who create a project. Do not remove the following permissions, otherwise project creators will be unable to complete the setup of their newly created projects:'
     permissions:
       section_check_all_label: Assign all %{module} permissions
       section_uncheck_all_label: Unassign all %{module} permissions
@@ -1140,6 +1160,8 @@ cs:
       matrix_check_uncheck_all_in_row_label_html: Přepnout <em>%{permission}</em> oprávnění pro všechny role
       matrix_check_uncheck_all_in_col_label_html: Přepnout všechna %{module} oprávnění pro <em>%{role}</em> roli
   users:
+    force_password_change_hint: The user must set a new password on their next login. Automatically enabled when sending credentials via email.
+    send_information_hint: Emails the password in plain text. When checked, the user will be required to change their password on first login.
     autologins:
       prompt: Zůstaňte přihlášeni po %{num_days}
     sessions:
@@ -2605,6 +2627,7 @@ cs:
       unsupported_storage_type: není podporovaným typem úložiště.
       storage_error: Došlo k chybě při připojení k úložišti.
       invalid_input: Vstup je neplatný.
+      invalid_child_for_parent: is not allowed as a parent for this view type.
   activity:
     item:
       created_by_on: vytvořil %{user} dne %{datetime}
@@ -3525,6 +3548,30 @@ cs:
   general_text_false: nepravda
   gui_validation_error: 1 chyba
   gui_validation_error_plural: "%{count} chyb"
+  health_reports:
+    report_component:
+      checks:
+        failures:
+          one: "%{count} check failed"
+          few: "%{count} checks failed"
+          many: "%{count} checks failed"
+          other: "%{count} checks failed"
+        success: All checks passed
+        warnings:
+          one: "%{count} check returned a warning"
+          few: "%{count} checks returned a warning"
+          many: "%{count} checks returned a warning"
+          other: "%{count} checks returned a warning"
+      summary:
+        failure: Some checks failed and the system does not work as expected.
+        success: All connections and systems are working as expected.
+        warning: Some checks returned a warning. This can lead to unexpected behaviour.
+    result_component:
+      status:
+        failed: Failed
+        passed: Passed
+        skipped: Skipped
+        warning: Warning
   homescreen:
     additional:
       projects: Nejnovější projekty v systému
@@ -3538,18 +3585,17 @@ cs:
         header: Přečtěte si o nových funkcích a aktualizacích produktů.
         learn_about: Další informace o všech nových funkcích
         missing: Zatím nejsou k dispozici žádné zvýrazněné funkce.
-        '17_3':
+        '17_4':
           new_features_title: 'The release contains various new features and improvements, such as:
 
             '
           new_features_list:
-            line_0: 'Big Agile update: dedicated sprint objects, all work packages visible on Backlogs, and automatic sprint board creation.'
-            line_1: In-place editing of project attributes on the Project Overview page.
-            line_2: Sharing of meeting templates (Basic plan and higher).
-            line_3: Better search in Time and Costs, Boards, and more.
-            line_4: Option to safely change project identifiers.
-            line_5: Improved workflow configuration for administrators.
-            line_6: Action boards released to Community.
+            line_0: Jira Migrator with support for basic custom fields.
+            line_1: Backlog buckets for structuring and prioritizing work packages during backlog refinement.
+            line_2: Easier drag and drop and improved move options in the Backlogs module.
+            line_3: Sprint Start and Complete buttons in the sprint header.
+            line_4: Copy workflow settings between roles.
+            line_5: "'My Meetings' widget on the Home and Project Overview pages."
     links:
       upgrade_enterprise_edition: Upgradovat na Enterprise Edici
       postgres_migration: Migrujte vaši instalaci na PostgreSQL
@@ -3827,6 +3873,7 @@ cs:
   label_age: Věk
   label_ago: dnů před
   label_all: vše
+  label_all_uppercase: All
   label_all_time: celkový čas
   label_all_words: Všechna slova
   label_all_open_wps: Všechny otevřené
@@ -4354,6 +4401,7 @@ cs:
   label_role_new: Nová role
   label_role_grantable: Udělitelná role
   label_role_plural: Role
+  label_role_missing_permissions: "%{role} (missing required permissions)"
   label_role_search: Přiřadit roli novým členům
   label_scm: SCM
   label_scroll_left: Rolovat vlevo
@@ -4586,7 +4634,7 @@ cs:
       you_have: Máte
     logo_alt_text: Logo
     mention:
-      subject: "%{user_name} vás zmínil v #%{id} - %{subject}"
+      subject: "%{user_name} mentioned you in %{id} - %{subject}"
     notification:
       center: Centrum oznámení
       see_in_center: Zobrazit komentář v oznamovacím centru
@@ -4623,10 +4671,10 @@ cs:
       note: 'Poznámka: "%{note}"'
     sharing:
       work_packages:
-        allowed_actions_html: You may %{allowed_actions} this work package. This can change depending on your project role and permissions.
+        allowed_actions_html: 'You have the following permissions on this work package: %{allowed_actions}. This can change depending on your project role and permissions.'
         create_account: Pro přístup k tomuto pracovnímu balíčku musíte vytvořit a aktivovat účet na %{instance}.
         open_work_package: Otevřít pracovní balíček
-        subject: 'Pracovní balíček #%{id} byl s vámi sdílen'
+        subject: Work package %{id} was shared with you
         enterprise_text: Sdílejte pracovní balíčky s uživateli, kteří nejsou členy projektu.
         summary:
           user: "%{user} s vámi sdílel pracovní balíček s právy %{role_rights}"
@@ -4839,6 +4887,18 @@ cs:
     text_getting_started_description: Získejte rychlý přehled o řízení projektu a spolupráci týmu s OpenProject. Toto video můžete restartovat z nabídky nápovědy.
     welcome: Vítejte v %{app_title}
     select_language: Vyberte prosím svůj jazyk
+  open_project:
+    common:
+      work_package_card_component:
+        menu:
+          label_actions: Work package actions
+      work_package_card_box_component:
+        header:
+          label_actions: Open menu
+          label_work_package_count:
+            zero: No work packages
+            one: "%{count} work package"
+            other: "%{count} work packages"
   permission_add_work_package_comments: Přidat komentáře
   permission_add_work_packages: Přidat pracovní balíčky
   permission_add_messages: Odesílat zprávy
@@ -4856,7 +4916,6 @@ cs:
   permission_add_work_package_watchers: Přidat sledující
   permission_assign_versions: Přiřadit verze
   permission_browse_repository: Přístup pouze pro čtení do repozitáře (procházet a pokladna)
-  permission_change_wiki_parent_page: Změnit nadřazenou wiki stránku
   permission_change_work_package_status: Změnit stav pracovního balíčku
   permission_change_work_package_status_explanation: Umožňuje změnu stavu bez oprávnění upravovat pracovní balíčky
   permission_comment_news: Komentování novinek
@@ -4871,8 +4930,6 @@ cs:
   permission_delete_own_messages: Odstranit vlastní zprávy
   permission_delete_reportings: Odstranit přehledy
   permission_delete_timelines: Odstranit časové osy
-  permission_delete_wiki_pages: Odstranit wiki stránky
-  permission_delete_wiki_pages_attachments: Odstranit přílohy
   permission_edit_work_package_comments: Moderovat komentáře
   permission_edit_work_package_comments_explanation: 'Caution: Users with this permission are able to edit anyone''s comment.'
   permission_edit_work_packages: Upravit pracovní balíčky
@@ -4892,12 +4949,10 @@ cs:
   permission_edit_wiki_pages: Upravit stránky wiki
   permission_export_work_packages: Exportovat pracovní balíčky
   permission_export_projects: Exportovat projekty
-  permission_export_wiki_pages: Exportovat Wiki stránky
   permission_invite_members_by_email: Pozvat členy e-mailem
   permission_invite_members_by_email_explanation: 'Umožní uživatelům pozvat nové členy e-mailem. Pozvaní uživatelé obdrží e-mail s odkazem pro nastavení jejich hesla a aktivaci jejich účtu. Závisí na oprávnění ke správě členů
 
     '
-  permission_list_attachments: Seznam příloh
   permission_log_own_time: Zaznamenat vlastní čas
   permission_log_time: Čas záznamu pro ostatní uživatele
   permission_manage_forums: Správa fór
@@ -4912,7 +4967,6 @@ cs:
   permission_manage_subtasks: Spravovat hierarchie pracovních balíčků
   permission_manage_versions: Správovat verze
   permission_manage_wiki: Spravovat wiki
-  permission_manage_wiki_menu: Spravovat wiki menu
   permission_manage_own_working_times: Spravovat vlastní pracovní dobu
   permission_manage_own_working_times_explanation: 'Umožní uživatelům spravovat vlastní pracovní dobu a osobní nepracovní dny.
 
@@ -4922,8 +4976,6 @@ cs:
 
     '
   permission_move_work_packages: Přesun pracovních balíčků
-  permission_protect_wiki_pages: Ochrana stránky wiki
-  permission_rename_wiki_pages: Přejmenovat stránky wiki
   permission_save_queries: Uložit pohled
   permission_search_project: Hledat projekt
   permission_select_custom_fields: Vybrat vlastní pole
@@ -5302,6 +5354,9 @@ cs:
   setting_mail_handler_body_delimiter_regex: Zkrátit e-maily odpovídající tomuto regexu
   setting_mail_handler_ignore_filenames: Ignorované přílohy e-mailů
   setting_new_project_user_role_id: Role přiřazená uživateli bez práv administrátora, který projekt vytvořil
+  setting_new_project_user_role_id_caption: 'Only roles that include the permissions to edit project attributes and to manage members are listed, so that the creator can complete the project setup.
+
+    '
   setting_new_project_send_confirmation_email: Send notification to author when creating a new project
   setting_new_project_notification_text: Text notifikace
   setting_password_active_rules: Password requirements
@@ -5718,6 +5773,7 @@ cs:
   text_project_identifier_format: Must start with a lowercase letter. Only lowercase letters (a-z), numbers, dashes and underscores are allowed.
   text_reassign: 'Přiřadit k pracovnímu balíčku:'
   text_regexp_multiline: 'regex je použit v režimu více řádků. např.: ^---\s+'
+  text_rename_wiki_page: Rename wiki page
   text_repository_usernames_mapping: |-
     Vyberte nebo aktualizujte mapovaný uživatel OpenProject ke každému uživatelskému jménu nalezenému v protokolu repozitáře.
     Uživatelé se stejným OpenProject a repozitářovým jménem nebo e-mailem jsou automaticky mapováni.
@@ -5899,10 +5955,13 @@ cs:
           same_as_work: Nastavit na stejnou hodnotu jako práce.
     permissions:
       comment: Komentář
+      comment_verb: comment
       comment_description: Může zobrazit a komentovat tento pracovní balíček.
       edit: Upravit
+      edit_verb: edit
       edit_description: Může zobrazovat, komentovat a upravovat tento pracovní balíček.
       view: Zobrazit
+      view_verb: view
       view_description: Může zobrazit tento pracovní balíček.
     reminders:
       label_remind_at: Datum
@@ -6150,11 +6209,6 @@ cs:
       scopes: Práva
       successful_application_revocation: Zrušení aplikace %{application_name} bylo úspěšné.
       none_given: Žádné aplikaci OAuth nebyl udělen přístup k vašemu uživatelskému účtu.
-    x_active_tokens:
-      one: jeden aktivní token
-      few: "%{count} aktivní token"
-      many: "%{count} aktivní token"
-      other: "%{count} aktivních tokenů"
     flows:
       authorization_code: Tok kódu autorizace
       client_credentials: Průtok přihlašovacích údajů klienta
@@ -6164,8 +6218,12 @@ cs:
     client_credentials_impersonation_html: 'Ve výchozím nastavení OpenProject poskytuje OAuth 2.0 autorizaci přes %{authorization_code_flow_link}. Můžete volitelně povolit %{client_credentials_flow_link}, ale musíte poskytnout uživateli, na jehož jménem budou žádosti provedeny.
 
       '
+    confirm_revoke_my_application:
+      one: Do you really want to remove this application? This will revoke one token active for it.
+      few: Do you really want to remove this application? This will revoke %{count} tokens active for it.
+      many: Do you really want to remove this application? This will revoke %{count} tokens active for it.
+      other: Do you really want to remove this application? This will revoke %{count} tokens active for it.
     authorization_error: Došlo k chybě autorizace.
-    revoke_my_application_confirmation: Opravdu chcete odstranit tuto aplikaci? Tato akce zruší %{token_count} aktivních aplikací.
     my_registered_applications: Registrované OAuth aplikace
   oauth_client:
     urn_connection_status:

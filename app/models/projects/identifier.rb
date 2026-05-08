@@ -35,7 +35,6 @@ module Projects::Identifier
   SEMANTIC_IDENTIFIER_MAX_LENGTH = 10
   # Classic identifier format: lowercase letters, digits, hyphens, underscores — but not all-numeric.
   CLASSIC_IDENTIFIER_FORMAT = /\A(?!\d+\z)[a-z0-9\-_]+\z/
-  # Semantic identifier format is covered by validate_identifier_semantic_format via multiple validators
 
   RESERVED_IDENTIFIERS = %w[new menu queries filters identifier_update_dialog identifier_suggestion].freeze
 
@@ -64,13 +63,12 @@ module Projects::Identifier
                       on: :create,
                       if: -> { Setting::WorkPackageIdentifier.semantic? && identifier.blank? }
 
-    # Validators
     validates :identifier,
               presence: true,
               uniqueness: { case_sensitive: false },
               if: ->(p) { p.persisted? || p.identifier.present? }
 
-    validate :validate_identifier, if: ->(p) { p.identifier_changed? && p.identifier.present? }
+    validates :identifier, "projects/identifier" => true, if: :identifier_changed?
 
     friendly_id :identifier, use: %i[finders history], slug_column: :identifier
 
@@ -83,13 +81,44 @@ module Projects::Identifier
     def unset_slug_if_invalid; end
   end
 
+  # Domain-named scopes for the FriendlyId::Slug relation returned by Project.identifier_slugs.
+  # Lets callers compose against verbs like .historically_reserved / .for_identifier / .upcased_values
+  # instead of raw SQL fragments — keeping FriendlyId::Slug column knowledge in one place.
+  module IdentifierSlugScopes
+    # Slugs that are no longer used as any active project's identifier, but remain reserved
+    # because FriendlyId still owns them — so they cannot be reused by another project.
+    def historically_reserved
+      where("LOWER(slug) NOT IN (SELECT LOWER(identifier) FROM projects)")
+    end
+
+    # Slugs whose lowercase form equals the lowercased input.
+    def for_identifier(value)
+      where("LOWER(slug) = ?", value.downcase)
+    end
+
+    # Excludes the given project's own slug history. No-op when project is nil.
+    def excluding_project(project)
+      project ? where.not(sluggable_id: project) : self
+    end
+
+    def upcased_values   = pluck(Arel.sql("UPPER(slug)"))
+    def downcased_values = pluck(Arel.sql("LOWER(slug)"))
+    # Verbatim values, no case folding. Named `raw_values` to avoid colliding
+    # with `ActiveRecord::Relation#values` (an internal Rails method).
+    def raw_values = pluck(:slug)
+  end
+
   class_methods do
     def classic_identifier_format?(str)
       str.match?(CLASSIC_IDENTIFIER_FORMAT)
     end
 
-    def historical_slugs
-      FriendlyId::Slug.where(sluggable_type: name)
+    # FriendlyId's :history module records a row on every save, so this relation contains
+    # both currently-used identifiers and historically-reserved ones. Compose with
+    # `.historically_reserved` to filter to the latter. The name aligns with FriendlyId's
+    # `project.slugs` association for vocabulary consistency.
+    def identifier_slugs
+      FriendlyId::Slug.where(sluggable_type: name).extending(IdentifierSlugScopes)
     end
 
     def suggest_identifier(name, mode: Setting[:work_packages_identifier])
@@ -126,56 +155,6 @@ module Projects::Identifier
   end
 
   private
-
-  def validate_identifier
-    validate_identifier_not_reserved_keyword
-
-    if Setting::WorkPackageIdentifier.semantic? || Array(validation_context).include?(:semantic_conversion)
-      validate_identifier_semantic_format
-    else
-      validate_identifier_classic_format
-    end
-
-    validate_identifier_not_historically_reserved
-  end
-
-  def validate_identifier_classic_format
-    errors.add(:identifier, :invalid) unless self.class.classic_identifier_format?(identifier)
-    if identifier.length > CLASSIC_IDENTIFIER_MAX_LENGTH
-      errors.add(:identifier, :too_long, count: CLASSIC_IDENTIFIER_MAX_LENGTH)
-    end
-  end
-
-  def validate_identifier_semantic_format
-    errors.add(:identifier, :must_start_with_letter) unless identifier.match?(/\A[A-Z]/)
-    errors.add(:identifier, :no_special_characters) unless identifier.match?(/\A[A-Z0-9_]*\z/)
-    if identifier.length > SEMANTIC_IDENTIFIER_MAX_LENGTH
-      errors.add(:identifier, :too_long, count: SEMANTIC_IDENTIFIER_MAX_LENGTH)
-    end
-  end
-
-  def validate_identifier_not_reserved_keyword
-    if RESERVED_IDENTIFIERS.include?(identifier.downcase)
-      errors.add(:identifier, :exclusion)
-    end
-  end
-
-  # Checks friendly_id_slugs for any project that previously used this identifier and
-  # has since changed it. It allows a project to switch back to an identifier it has
-  # used before. Uses LOWER() because slugs may be stored in a different case than the
-  # incoming identifier (e.g. old lowercase slug vs new uppercase semantic identifier).
-  def validate_identifier_not_historically_reserved
-    return if errors.any? { |error| error.attribute == :identifier && error.type == :taken }
-
-    errors.add(:identifier, :taken, value: identifier) if identifier_used_by_other_project_in_past?
-  end
-
-  def identifier_used_by_other_project_in_past?
-    self.class.historical_slugs
-              .where("LOWER(slug) = ?", identifier.downcase)
-              .where.not(sluggable_id: id)
-              .exists?
-  end
 
   def generate_semantic_identifier
     return if name.blank?

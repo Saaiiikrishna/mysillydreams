@@ -33,42 +33,46 @@ module Backlogs
     include OpTurbo::ComponentStream
 
     before_action :check_feature_flag
-    before_action :find_backlog_bucket, only: %i[edit_dialog update destroy]
+    before_action :find_backlog_bucket, only: %i[edit_dialog destroy_dialog update destroy]
 
     def new_dialog
-      backlog_bucket = Agile::BacklogBucket.new(project: @project)
+      backlog_bucket = BacklogBucket.new(project: @project)
 
-      respond_with_dialog Backlogs::NewBacklogBucketDialogComponent.new(backlog_bucket:)
+      respond_with_dialog Backlogs::BucketDialogComponent.new(backlog_bucket:)
     end
 
     def edit_dialog
-      respond_with_dialog Backlogs::NewBacklogBucketDialogComponent.new(backlog_bucket: @backlog_bucket, state: :edit)
+      respond_with_dialog Backlogs::BucketDialogComponent.new(backlog_bucket: @backlog_bucket, state: :edit)
     end
 
-    def create # rubocop:disable Metrics/AbcSize
+    def destroy_dialog
+      respond_with_dialog Backlogs::BacklogBucketDestroyModalComponent.new(backlog_bucket: @backlog_bucket)
+    end
+
+    def create
       call = ::BacklogBuckets::CreateService
                .new(user: current_user)
                .call(attributes: backlog_bucket_params)
 
       if call.success?
         flash[:notice] = I18n.t(:notice_successful_create)
-        render turbo_stream: turbo_stream.redirect_to(project_backlogs_backlog_path(@project))
+        redirect_to_backlogs
       else
-        update_new_backlog_bucket_form_component_via_turbo_stream(backlog_bucket: call.result, base_errors: call.errors[:base])
+        update_backlog_bucket_form_component_via_turbo_stream(backlog_bucket: call.result, base_errors: call.errors[:base])
         respond_with_turbo_streams
       end
     end
 
-    def update # rubocop:disable Metrics/AbcSize
+    def update
       call = ::BacklogBuckets::UpdateService
                .new(user: current_user, model: @backlog_bucket)
                .call(attributes: edit_backlog_bucket_params)
 
       if call.success?
         flash[:notice] = I18n.t(:notice_successful_update)
-        render turbo_stream: turbo_stream.redirect_to(project_backlogs_backlog_path(@project))
+        redirect_to_backlogs
       else
-        update_new_backlog_bucket_form_component_via_turbo_stream(backlog_bucket: call.result, base_errors: call.errors[:base])
+        update_backlog_bucket_form_component_via_turbo_stream(backlog_bucket: call.result, base_errors: call.errors[:base])
         respond_with_turbo_streams
       end
     end
@@ -84,14 +88,14 @@ module Backlogs
         flash[:error] = call.errors.full_messages.join(", ")
       end
 
-      render turbo_stream: turbo_stream.redirect_to(project_backlogs_backlog_path(@project))
+      redirect_to_backlogs
     end
 
     private
 
-    def update_new_backlog_bucket_form_component_via_turbo_stream(backlog_bucket:, base_errors: nil)
+    def update_backlog_bucket_form_component_via_turbo_stream(backlog_bucket:, base_errors: nil)
       update_via_turbo_stream(
-        component: Backlogs::NewBacklogBucketFormComponent.new(
+        component: Backlogs::BucketFormComponent.new(
           backlog_bucket:,
           base_errors:
         ),
@@ -104,7 +108,7 @@ module Backlogs
     end
 
     def find_backlog_bucket
-      @backlog_bucket = Agile::BacklogBucket.where(project: @project).find(params[:id])
+      @backlog_bucket = BacklogBucket.where(project: @project).find(params[:id])
     end
 
     def backlog_bucket_params
@@ -113,6 +117,12 @@ module Backlogs
 
     def edit_backlog_bucket_params
       params.expect(backlog_bucket: %i[name])
+    end
+
+    def redirect_to_backlogs
+      render turbo_stream: turbo_stream.redirect_to(
+        project_backlogs_backlog_path(@project, helpers.all_backlogs_params)
+      )
     end
   end
 end

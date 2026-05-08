@@ -66,16 +66,10 @@ module OpenProject::Wikis
 
     register "openproject-wikis", author_url: "https://openproject.org" do
       project_module :work_package_tracking do
-        permission :view_wiki_page_links,
-                   {},
-                   permissible_on: :project,
-                   dependencies: %i[view_work_packages],
-                   contract_actions: { wiki_page_links: %i[view] }
-
         permission :manage_wiki_page_links,
                    {},
                    permissible_on: :project,
-                   dependencies: %i[view_work_packages],
+                   dependencies: %i[edit_work_packages],
                    contract_actions: { wiki_page_links: %i[manage] }
       end
 
@@ -98,6 +92,8 @@ module OpenProject::Wikis
            icon: "browser"
     end
 
+    patch_with_namespace :WikiPages, :CreateService
+    patch_with_namespace :WikiPages, :UpdateService
     patch_with_namespace :WorkPackages, :CreateService
     patch_with_namespace :WorkPackages, :UpdateService
 

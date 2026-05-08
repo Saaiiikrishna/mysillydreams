@@ -39,7 +39,7 @@ RSpec.describe Backlogs::StoryMenuListComponent, type: :component do
   current_user { user }
 
   let(:project) { create(:project, types: [type_feature, type_task]) }
-  let(:sprint) { create(:agile_sprint, project:, name: "Sprint 1", start_date: Date.yesterday, finish_date: Date.tomorrow) }
+  let(:sprint) { create(:sprint, project:, name: "Sprint 1", start_date: Date.yesterday, finish_date: Date.tomorrow) }
   let(:position) { 2 }
   let(:max_position) { 3 }
   let(:story) do
@@ -51,7 +51,7 @@ RSpec.describe Backlogs::StoryMenuListComponent, type: :component do
            priority: default_priority,
            story_points: 5,
            position:,
-           sprint: sprint)
+           sprint:)
   end
 
   def render_component(position: 2, max_position: 3, open_sprints_exist: true)
@@ -87,13 +87,12 @@ RSpec.describe Backlogs::StoryMenuListComponent, type: :component do
     end
 
     context "when params[:all] is true" do
-      before { vc_test_controller.params.merge!(all: "1") }
+      before { vc_test_controller.params[:all] = "1" }
 
       it "adds the all param to the open details href" do
         render_component
 
-        href = page.find("#work_package_#{story.id}_menu_open_details")[:href]
-        expect(href).to match(/all=1/)
+        expect(page).to have_css(%(#work_package_#{story.id}_menu_open_details[href*="all=1"]))
       end
     end
 
@@ -130,6 +129,38 @@ RSpec.describe Backlogs::StoryMenuListComponent, type: :component do
         value: story.id.to_s,
         text: "Copy work package ID"
       )
+    end
+
+    context "in semantic mode",
+            with_flag: { semantic_work_package_ids: true },
+            with_settings: { work_packages_identifier: "semantic" } do
+      let(:project) { create(:project, types: [type_feature, type_task], identifier: "STORY") }
+
+      it "uses the semantic displayId in the open details, fullscreen, and clipboard URLs" do
+        render_component
+
+        semantic_id = story.reload.identifier
+        expect(semantic_id).to start_with("STORY-")
+
+        details = page.find_by_id("work_package_#{story.id}_menu_open_details")
+        expect(details[:href]).to include("/details/#{semantic_id}")
+        expect(details[:href]).not_to include("/details/#{story.id}")
+
+        fullscreen = page.find_by_id("work_package_#{story.id}_menu_open_fullscreen")
+        expect(fullscreen[:href]).to end_with("/work_packages/#{semantic_id}")
+        expect(fullscreen[:href]).not_to include("/work_packages/#{story.id}")
+
+        clipboard = page.find("clipboard-copy##{"work_package_#{story.id}_menu_copy_url_to_clipboard"}")
+        expect(clipboard[:value]).to end_with("/work_packages/#{semantic_id}")
+        expect(clipboard[:value]).not_to include("/work_packages/#{story.id}")
+      end
+
+      it "still copies the numeric primary key for the 'Copy work package ID' action" do
+        render_component
+
+        clipboard_id = page.find("clipboard-copy##{"work_package_#{story.id}_menu_copy_work_package_id"}")
+        expect(clipboard_id[:value]).to eq(story.id.to_s)
+      end
     end
 
     it "shows a divider before the Move submenu" do
@@ -257,13 +288,12 @@ RSpec.describe Backlogs::StoryMenuListComponent, type: :component do
     end
 
     context "when params[:all] is true" do
-      before { vc_test_controller.params.merge!(all: "1") }
+      before { vc_test_controller.params[:all] = "1" }
 
       it "adds the all param to the move to sprint href" do
         render_component(open_sprints_exist: true)
 
-        href = page.find("#work_package_#{story.id}_menu_move_to_sprint")[:href]
-        expect(href).to match(/all=1/)
+        expect(page).to have_css(%(#work_package_#{story.id}_menu_move_to_sprint[href*="all=1"]))
       end
     end
   end

@@ -35,19 +35,14 @@ module Wikis
     has_many :page_links, dependent: :destroy
 
     scope :enabled, -> { where(enabled: true) }
-    scope :visible, lambda { |user = User.current|
-      if user.admin? || user.allowed_in_any_project?(:view_wiki_page_links)
-        all
-      else
-        none
-      end
-    }
+    scope :visible, ->(_user = User.current) { all }
 
     validates :name, presence: true, uniqueness: true, length: { maximum: 255 }
 
     before_create :generate_universal_identifier
 
     def to_s = self.class.registry_prefix
+    def user_connected?(_user) = raise SubclassResponsibilityError
 
     class << self
       def registry_prefix = raise SubclassResponsibilityError

@@ -126,8 +126,12 @@ ms:
         title: Jira configuration
         new: New configuration
       banner:
-        title: Limited import capabilities
-        description: 'This Jira Migrator is currently in beta and can only import basic data: projects, issues (name, title, description, attachments), users (name, email, project membership), statuses, and types. It cannot import workflows, custom fields, issue relations, or permissions. We currently only support Jira Server/Data Center versions 10.x and 11.x. Cloud instances are not supported at this time.'
+        title: Beta - Try it out!
+        description: This Jira Migrator is currently in beta. We currently only support Jira Server/Data Center versions 10.x and 11.x. Cloud instances are not supported at this time.
+        contribution_callout: 'Please, help us improve the Jira Migrator with your feedback and private data donations. You can [join the development community](link) of the Jira Migrator.
+
+          '
+        supported_versions: ''
       form:
         fields:
           name: Name
@@ -236,8 +240,10 @@ ms:
               caption_done: Completed
               label_info: Please note that this import tool is in beta and cannot import all types of data. Here is a summary of what the host Jira instance offers for import and what this tool is able to import right now.
               description: Select what data you want to import from the available data fetched from the host Jira instance.
-              label_available_data: Available data
-              label_not_available_data: Not available for import
+              label_supported_data: Supported data
+              label_coming_soon: Coming soon (Q2 2026)
+              label_coming_later: Coming later
+              label_available_server_data: Available data on %{server_info}
               button_select_projects: Select projects to import
               button_continue: Continue
               label_import: Select which projects you would like to import.
@@ -246,16 +252,22 @@ ms:
               label_progress: Fetching data from Jira...
               elements:
                 relations: Relations between issues
+                project_ids: Project identifiers
+                issue_ids: Issues identifiers
+                sprints: Sprint assignments
                 workflows: Project-level workflows
-                users: Users
-                sprints: Sprints
                 schemes: Schemas
-                permissions: User, group and project permissions
+                permissions: Permissions
+                projects: Projects
+                issues: Issues
+                issue_details: Issue description, history, comments and attachments
+                custom_fields: A subset of custom fields
+                users: Involved users and groups
             confirm_import:
               title: Import data
               caption: Review your import settings and start the import
               caption_done: Completed
-              label_available_data: Available data to import
+              label_available_data: Data to be imported
               label_users_import_explanation: Users that are involved in selected projects (group memberships included)
               button_start: Start import
               description: You are about to start an import run with the following settings.
@@ -264,33 +276,33 @@ ms:
             import_result:
               title: Import run results
               caption: Review import run or revert import
-              info: Import run successful.
+              info: Import run was successful.
               label_results: Imported
               label_revert: Revert import
               button_revert: Revert import
-              button_done: Finalize import
-              preview_description: The imported data is currently in review mode. Click "Finalize import" to make the import permanent or "Revert import" to undo all changes made in this import run.
-              label_finalize_import: Finalize import
-              label_finalizing: Finalizing import...
-              label_finalizing_done: Import finalized.
+              button_done: Approve import
+              preview_description: The imported data is currently in review mode. Click "Approve import" to make the import permanent or "Revert import" to undo all changes made in this import run.
+              label_finalize_import: Approve import
+              label_finalizing: Approving import...
+              label_finalizing_done: Import approved.
               label_revert_progress: Reverting import...
               label_reverted: Import reverted.
           select_dialog:
             filter_projects: Filter by text
           import_dialog:
-            title: Start this import?
+            title: Please make sure you have a backup!
             confirm_button: Start import
-            description: 'This importer is an alpha feature. It is not yet able to import all data from Jira and might leave incomplete data on this OpenProject instance. <b>Do not use a production environment and create a backup of your OpenProject data before starting.</b>
+            description: 'Imports change your OpenProject configuration. After the import you will have the opportunity to review the changes. While in review, you have an option to revert or approve the import. After approving the import reverting will no longer be possible. Therefore, please, make sure that you have [a backup of your OpenProject instance](link) before proceeding.
 
               '
-            confirm: I understand and made the necessary preparations
+            confirm: I understand and have a backup
           revert_dialog:
             title: Permanently revert this import?
-            description: This will delete all imported objects (including whole projects) even if there was user activity in those projects after the import on OpenProject.
+            description: This will delete all imported objects (including whole projects).
             confirm: I understand that this reversion will delete data permanently
           finalize_dialog:
-            title: Finalize this import?
-            description: Once finalized, this import can no longer be reverted. All imported data will become permanently imported.
+            title: Approve this import?
+            description: Once approved, this import can no longer be reverted. All imported data will become permanent.
             confirm: I understand that this action cannot be undone
             confirm_button: Understood
           select_projects:
@@ -441,8 +453,11 @@ ms:
         ignore: Ignore changes
         save: Save changes and continue
       role_selector:
+        title: Select roles
         label: 'Role: %{role}'
         no_role: Select role
+        roles:
+          other: "%{count} roles selected"
       blankslate:
         title: No status transitions configured
         description: Add statuses to start configuring workflows for this role
@@ -1084,6 +1099,8 @@ ms:
       no_results_title_text: Tiada berita untuk dipaparkan buat masa ini.
       no_results_content_text: Tambah item berita
   roles:
+    edit:
+      default_for_new_projects_warning: 'This role is configured as the default role given to non-admin users who create a project. Do not remove the following permissions, otherwise project creators will be unable to complete the setup of their newly created projects:'
     permissions:
       section_check_all_label: Assign all %{module} permissions
       section_uncheck_all_label: Unassign all %{module} permissions
@@ -1095,6 +1112,8 @@ ms:
       matrix_check_uncheck_all_in_row_label_html: Toggle <em>%{permission}</em> permission for all roles
       matrix_check_uncheck_all_in_col_label_html: Toggle all %{module} permissions for <em>%{role}</em> role
   users:
+    force_password_change_hint: The user must set a new password on their next login. Automatically enabled when sending credentials via email.
+    send_information_hint: Emails the password in plain text. When checked, the user will be required to change their password on first login.
     autologins:
       prompt: Kekal log masuk selama %{num_days}
     sessions:
@@ -2491,6 +2510,7 @@ ms:
       unsupported_storage_type: is not a supported storage type.
       storage_error: There was an error with the storage connection.
       invalid_input: The input is invalid.
+      invalid_child_for_parent: is not allowed as a parent for this view type.
   activity:
     item:
       created_by_on: dicipta oleh %{user} pada %{datetime}
@@ -3348,6 +3368,24 @@ ms:
   general_text_false: palsu
   gui_validation_error: 1 ralat
   gui_validation_error_plural: "%{count} ralat"
+  health_reports:
+    report_component:
+      checks:
+        failures:
+          other: "%{count} checks failed"
+        success: All checks passed
+        warnings:
+          other: "%{count} checks returned a warning"
+      summary:
+        failure: Some checks failed and the system does not work as expected.
+        success: All connections and systems are working as expected.
+        warning: Some checks returned a warning. This can lead to unexpected behaviour.
+    result_component:
+      status:
+        failed: Failed
+        passed: Passed
+        skipped: Skipped
+        warning: Warning
   homescreen:
     additional:
       projects: Projek terbaru yang dapat dilihat dalam contoh ini.
@@ -3361,18 +3399,17 @@ ms:
         header: Baca berkenaan fitur-fitur baharu dan kemas kini produk.
         learn_about: Learn more about all new features
         missing: There are no highlighted features yet.
-        '17_3':
+        '17_4':
           new_features_title: 'The release contains various new features and improvements, such as:
 
             '
           new_features_list:
-            line_0: 'Big Agile update: dedicated sprint objects, all work packages visible on Backlogs, and automatic sprint board creation.'
-            line_1: In-place editing of project attributes on the Project Overview page.
-            line_2: Sharing of meeting templates (Basic plan and higher).
-            line_3: Better search in Time and Costs, Boards, and more.
-            line_4: Option to safely change project identifiers.
-            line_5: Improved workflow configuration for administrators.
-            line_6: Action boards released to Community.
+            line_0: Jira Migrator with support for basic custom fields.
+            line_1: Backlog buckets for structuring and prioritizing work packages during backlog refinement.
+            line_2: Easier drag and drop and improved move options in the Backlogs module.
+            line_3: Sprint Start and Complete buttons in the sprint header.
+            line_4: Copy workflow settings between roles.
+            line_5: "'My Meetings' widget on the Home and Project Overview pages."
     links:
       upgrade_enterprise_edition: Naik taraf ke edisi Enterprise
       postgres_migration: Mengalihkan pemasangan anda ke PostgreSQL
@@ -3650,6 +3687,7 @@ ms:
   label_age: Umur
   label_ago: hari yang lalu
   label_all: semua
+  label_all_uppercase: All
   label_all_time: sepanjang masa
   label_all_words: Semua perkataan
   label_all_open_wps: Buka semua
@@ -4181,6 +4219,7 @@ ms:
   label_role_plural: 'Peranan
 
     '
+  label_role_missing_permissions: "%{role} (missing required permissions)"
   label_role_search: Tetapkan peranan ke ahli baharu
   label_scm: SCM
   label_scroll_left: Skrol kiri
@@ -4404,7 +4443,7 @@ ms:
       you_have: Anda mempunyai
     logo_alt_text: Logo
     mention:
-      subject: "%{user_name} menyebut anda dalam #%{id} - %{subject}"
+      subject: "%{user_name} mentioned you in %{id} - %{subject}"
     notification:
       center: Ke pusat pemberitahuan
       see_in_center: Lihat komen dalam pusat pemberitahuan
@@ -4438,10 +4477,10 @@ ms:
       note: 'Nota: "%{note}"'
     sharing:
       work_packages:
-        allowed_actions_html: You may %{allowed_actions} this work package. This can change depending on your project role and permissions.
+        allowed_actions_html: 'You have the following permissions on this work package: %{allowed_actions}. This can change depending on your project role and permissions.'
         create_account: Untuk mengakses pakej kerja ini, anda perlu mencipta dan mengaktifkan akaun di %{instance}.
         open_work_package: Buka pakej kerja
-        subject: 'Pakej kerja #%{id} telah dikongsikan dengan anda'
+        subject: Work package %{id} was shared with you
         enterprise_text: Kongsi pakej kerja dengan pengguna yang bukan ahli projek.
         summary:
           user: "%{user} telah berkongsi satu pakej kerja bersama anda dengan hak %{role_rights}"
@@ -4651,6 +4690,18 @@ ms:
     text_getting_started_description: Dapatkan gambaran ringkas pengurusan projek dan kolaborasi kumpulan dengan OpenProject. Anda boleh mula semula video ini di menu bantuan.
     welcome: Selamat datang ke %{app_title}
     select_language: Sila pilih bahasa anda
+  open_project:
+    common:
+      work_package_card_component:
+        menu:
+          label_actions: Work package actions
+      work_package_card_box_component:
+        header:
+          label_actions: Open menu
+          label_work_package_count:
+            zero: No work packages
+            one: "%{count} work package"
+            other: "%{count} work packages"
   permission_add_work_package_comments: Add comments
   permission_add_work_packages: Tambah pakej kerja
   permission_add_messages: Pos mesej
@@ -4668,7 +4719,6 @@ ms:
   permission_add_work_package_watchers: Tambah pemerhati
   permission_assign_versions: Tetapkan versi
   permission_browse_repository: Akses baca-sahaja kepada repositori (melayari dan keluar)
-  permission_change_wiki_parent_page: 'Tukar induk halaman wiki '
   permission_change_work_package_status: Tukar status pakej kerja
   permission_change_work_package_status_explanation: Benarkan penukaran status tanpa kebenaran Edit pakej kerja
   permission_comment_news: Komen berita
@@ -4683,8 +4733,6 @@ ms:
   permission_delete_own_messages: Padam mesej sendiri
   permission_delete_reportings: Padam laporan
   permission_delete_timelines: Padam garis masa
-  permission_delete_wiki_pages: Padam halaman wiki
-  permission_delete_wiki_pages_attachments: Padam lampiran
   permission_edit_work_package_comments: Moderate comments
   permission_edit_work_package_comments_explanation: 'Caution: Users with this permission are able to edit anyone''s comment.'
   permission_edit_work_packages: Edit pakej kerja
@@ -4704,12 +4752,10 @@ ms:
   permission_edit_wiki_pages: Edit halaman wiki
   permission_export_work_packages: Eksport pakej kerja
   permission_export_projects: Export projects
-  permission_export_wiki_pages: Eksport halaman wiki
   permission_invite_members_by_email: Invite members by email
   permission_invite_members_by_email_explanation: 'Allows users to invite new members by email. Invited users will receive an email with a link to set their password and activate their account. Depends on the permission to manage members
 
     '
-  permission_list_attachments: Senarai lampiran
   permission_log_own_time: Log masa sendiri
   permission_log_time: Log masa untuk pengguna lain
   permission_manage_forums: Uruskan forum
@@ -4724,7 +4770,6 @@ ms:
   permission_manage_subtasks: Urus hierarki pakej kerja
   permission_manage_versions: Urus versi
   permission_manage_wiki: Urus wiki
-  permission_manage_wiki_menu: Urus menu wiki
   permission_manage_own_working_times: Manage own working times
   permission_manage_own_working_times_explanation: 'Allows users to manage their own working times, and personal non-working days.
 
@@ -4734,8 +4779,6 @@ ms:
 
     '
   permission_move_work_packages: Alih pakej kerja
-  permission_protect_wiki_pages: Lindungi halaman wiki
-  permission_rename_wiki_pages: Nama semula halaman wiki
   permission_save_queries: Simpan paparan
   permission_search_project: Cari projek
   permission_select_custom_fields: Pilih ruang tersuai
@@ -5112,6 +5155,9 @@ ms:
   setting_mail_handler_body_delimiter_regex: Memangkas e-mel yang hampir sama dengan regex ini
   setting_mail_handler_ignore_filenames: Lampiran mel yang diabaikan
   setting_new_project_user_role_id: Peranan yang diberikan kepada pengguna bukan pentadbir yang mencipta projek
+  setting_new_project_user_role_id_caption: 'Only roles that include the permissions to edit project attributes and to manage members are listed, so that the creator can complete the project setup.
+
+    '
   setting_new_project_send_confirmation_email: Send notification to author when creating a new project
   setting_new_project_notification_text: Notification text
   setting_password_active_rules: Password requirements
@@ -5528,6 +5574,7 @@ ms:
   text_project_identifier_format: Must start with a lowercase letter. Only lowercase letters (a-z), numbers, dashes and underscores are allowed.
   text_reassign: 'Tugaskan semula ke pakej kerja:'
   text_regexp_multiline: Regex digunakan dalam mod berbilang baris. cth., ^---\s+
+  text_rename_wiki_page: Rename wiki page
   text_repository_usernames_mapping: "Pilih atau kemas kini pengguna OpenProject yang dipetakan ke setiap nama pengguna yang ditemui dalam log repositori.\nPengguna dengan OpenProject dan nama pengguna repositori atau e-mel yang sama dipetakan secara automatik. "
   text_status_changed_by_changeset: Dilaksanakan dalam set perubahan %{value}.
   text_table_difference_description: Dalam jadual ini, %{entries} yang tunggal dipaparkan. Anda boleh lihat perbezaan antara mana-mana dua entri dengan mula memilih kotak penyemakan dalam jadual. Apabila butang di bawah jadual ditekan, perbezaan akan ditunjukkan.
@@ -5704,10 +5751,13 @@ ms:
           same_as_work: Tetapkan kepada nilai yang sama seperti Kerja.
     permissions:
       comment: Komen
+      comment_verb: comment
       comment_description: Boleh lihat dan komen berkenaan pakej kerja ini.
       edit: Edit
+      edit_verb: edit
       edit_description: Boleh lihat, komen dan edit pakej kerja ini.
       view: Lihat
+      view_verb: view
       view_description: Boleh papar pakej kerja ini.
     reminders:
       label_remind_at: Tarikh
@@ -5957,8 +6007,6 @@ ms:
       scopes: Kebenaran
       successful_application_revocation: Pembatalan aplikasi %{application_name} berjaya.
       none_given: Tiada aplikasi OAuth yang telah diberi akses ke akaun anda.
-    x_active_tokens:
-      other: "%{count} token aktif"
     flows:
       authorization_code: Aliran kod kebenaran
       client_credentials: Aliran kelayakan pelanggan
@@ -5968,8 +6016,9 @@ ms:
     client_credentials_impersonation_html: 'Secara default, OpenProject menyediakan kebenaran OAuth 2.0 melalui %{authorization_code_flow_link}. Anda boleh memilih untuk mengaktifkan %{client_credentials_flow_link}, tetapi anda mesti menyediakan pengguna yang akan mewakili permintaan.
 
       '
+    confirm_revoke_my_application:
+      other: Do you really want to remove this application? This will revoke %{count} tokens active for it.
     authorization_error: Sebuah ralat kebenaran telah berlaku.
-    revoke_my_application_confirmation: Adakah anda benar-benar mahu memadam aplikasi ini? Ini akan menarik balik %{token_count} yang aktif darinya.
     my_registered_applications: Aplikasi OAuth berdaftar
   oauth_client:
     urn_connection_status:

@@ -126,8 +126,12 @@
         title: Jira configuration
         new: New configuration
       banner:
-        title: Limited import capabilities
-        description: 'This Jira Migrator is currently in beta and can only import basic data: projects, issues (name, title, description, attachments), users (name, email, project membership), statuses, and types. It cannot import workflows, custom fields, issue relations, or permissions. We currently only support Jira Server/Data Center versions 10.x and 11.x. Cloud instances are not supported at this time.'
+        title: Beta - Try it out!
+        description: This Jira Migrator is currently in beta. We currently only support Jira Server/Data Center versions 10.x and 11.x. Cloud instances are not supported at this time.
+        contribution_callout: 'Please, help us improve the Jira Migrator with your feedback and private data donations. You can [join the development community](link) of the Jira Migrator.
+
+          '
+        supported_versions: ''
       form:
         fields:
           name: Name
@@ -242,8 +246,10 @@
               caption_done: Completed
               label_info: Please note that this import tool is in beta and cannot import all types of data. Here is a summary of what the host Jira instance offers for import and what this tool is able to import right now.
               description: Select what data you want to import from the available data fetched from the host Jira instance.
-              label_available_data: Available data
-              label_not_available_data: Not available for import
+              label_supported_data: Supported data
+              label_coming_soon: Coming soon (Q2 2026)
+              label_coming_later: Coming later
+              label_available_server_data: Available data on %{server_info}
               button_select_projects: Select projects to import
               button_continue: Continue
               label_import: Select which projects you would like to import.
@@ -252,16 +258,22 @@
               label_progress: Fetching data from Jira...
               elements:
                 relations: Relations between issues
+                project_ids: Project identifiers
+                issue_ids: Issues identifiers
+                sprints: Sprint assignments
                 workflows: Project-level workflows
-                users: Users
-                sprints: Sprints
                 schemes: Schemas
-                permissions: User, group and project permissions
+                permissions: Permissions
+                projects: Projects
+                issues: Issues
+                issue_details: Issue description, history, comments and attachments
+                custom_fields: A subset of custom fields
+                users: Involved users and groups
             confirm_import:
               title: Import data
               caption: Review your import settings and start the import
               caption_done: Completed
-              label_available_data: Available data to import
+              label_available_data: Data to be imported
               label_users_import_explanation: Users that are involved in selected projects (group memberships included)
               button_start: Start import
               description: You are about to start an import run with the following settings.
@@ -270,33 +282,33 @@
             import_result:
               title: Import run results
               caption: Review import run or revert import
-              info: Import run successful.
+              info: Import run was successful.
               label_results: Imported
               label_revert: Revert import
               button_revert: Revert import
-              button_done: Finalize import
-              preview_description: The imported data is currently in review mode. Click "Finalize import" to make the import permanent or "Revert import" to undo all changes made in this import run.
-              label_finalize_import: Finalize import
-              label_finalizing: Finalizing import...
-              label_finalizing_done: Import finalized.
+              button_done: Approve import
+              preview_description: The imported data is currently in review mode. Click "Approve import" to make the import permanent or "Revert import" to undo all changes made in this import run.
+              label_finalize_import: Approve import
+              label_finalizing: Approving import...
+              label_finalizing_done: Import approved.
               label_revert_progress: Reverting import...
               label_reverted: Import reverted.
           select_dialog:
             filter_projects: Filter by text
           import_dialog:
-            title: Start this import?
+            title: Please make sure you have a backup!
             confirm_button: Start import
-            description: 'This importer is an alpha feature. It is not yet able to import all data from Jira and might leave incomplete data on this OpenProject instance. <b>Do not use a production environment and create a backup of your OpenProject data before starting.</b>
+            description: 'Imports change your OpenProject configuration. After the import you will have the opportunity to review the changes. While in review, you have an option to revert or approve the import. After approving the import reverting will no longer be possible. Therefore, please, make sure that you have [a backup of your OpenProject instance](link) before proceeding.
 
               '
-            confirm: I understand and made the necessary preparations
+            confirm: I understand and have a backup
           revert_dialog:
             title: Permanently revert this import?
-            description: This will delete all imported objects (including whole projects) even if there was user activity in those projects after the import on OpenProject.
+            description: This will delete all imported objects (including whole projects).
             confirm: I understand that this reversion will delete data permanently
           finalize_dialog:
-            title: Finalize this import?
-            description: Once finalized, this import can no longer be reverted. All imported data will become permanently imported.
+            title: Approve this import?
+            description: Once approved, this import can no longer be reverted. All imported data will become permanent.
             confirm: I understand that this action cannot be undone
             confirm_button: Understood
           select_projects:
@@ -449,8 +461,12 @@
         ignore: Ignore changes
         save: Save changes and continue
       role_selector:
+        title: Select roles
         label: 'Role: %{role}'
         no_role: Select role
+        roles:
+          one: "%{count} role selected"
+          other: "%{count} roles selected"
       blankslate:
         title: No status transitions configured
         description: Add statuses to start configuring workflows for this role
@@ -1099,6 +1115,8 @@
       no_results_title_text: Det er ingen nyheter å vise.
       no_results_content_text: Legg til nyhet
   roles:
+    edit:
+      default_for_new_projects_warning: 'This role is configured as the default role given to non-admin users who create a project. Do not remove the following permissions, otherwise project creators will be unable to complete the setup of their newly created projects:'
     permissions:
       section_check_all_label: Assign all %{module} permissions
       section_uncheck_all_label: Unassign all %{module} permissions
@@ -1110,6 +1128,8 @@
       matrix_check_uncheck_all_in_row_label_html: Toggle <em>%{permission}</em> permission for all roles
       matrix_check_uncheck_all_in_col_label_html: Toggle all %{module} permissions for <em>%{role}</em> role
   users:
+    force_password_change_hint: The user must set a new password on their next login. Automatically enabled when sending credentials via email.
+    send_information_hint: Emails the password in plain text. When checked, the user will be required to change their password on first login.
     autologins:
       prompt: Forbli innlogget for %{num_days}
     sessions:
@@ -2525,6 +2545,7 @@
       unsupported_storage_type: is not a supported storage type.
       storage_error: There was an error with the storage connection.
       invalid_input: The input is invalid.
+      invalid_child_for_parent: is not allowed as a parent for this view type.
   activity:
     item:
       created_by_on: skapt av %{user} på %{datetime}
@@ -3399,6 +3420,26 @@
   general_text_false: usant
   gui_validation_error: 1 feil
   gui_validation_error_plural: "%{count} feil"
+  health_reports:
+    report_component:
+      checks:
+        failures:
+          one: "%{count} check failed"
+          other: "%{count} checks failed"
+        success: All checks passed
+        warnings:
+          one: "%{count} check returned a warning"
+          other: "%{count} checks returned a warning"
+      summary:
+        failure: Some checks failed and the system does not work as expected.
+        success: All connections and systems are working as expected.
+        warning: Some checks returned a warning. This can lead to unexpected behaviour.
+    result_component:
+      status:
+        failed: Failed
+        passed: Passed
+        skipped: Skipped
+        warning: Warning
   homescreen:
     additional:
       projects: Nyeste synlige prosjekter i denne forekomsten.
@@ -3412,18 +3453,17 @@
         header: Les om nye funksjoner og produktoppdateringer.
         learn_about: Learn more about all new features
         missing: There are no highlighted features yet.
-        '17_3':
+        '17_4':
           new_features_title: 'The release contains various new features and improvements, such as:
 
             '
           new_features_list:
-            line_0: 'Big Agile update: dedicated sprint objects, all work packages visible on Backlogs, and automatic sprint board creation.'
-            line_1: In-place editing of project attributes on the Project Overview page.
-            line_2: Sharing of meeting templates (Basic plan and higher).
-            line_3: Better search in Time and Costs, Boards, and more.
-            line_4: Option to safely change project identifiers.
-            line_5: Improved workflow configuration for administrators.
-            line_6: Action boards released to Community.
+            line_0: Jira Migrator with support for basic custom fields.
+            line_1: Backlog buckets for structuring and prioritizing work packages during backlog refinement.
+            line_2: Easier drag and drop and improved move options in the Backlogs module.
+            line_3: Sprint Start and Complete buttons in the sprint header.
+            line_4: Copy workflow settings between roles.
+            line_5: "'My Meetings' widget on the Home and Project Overview pages."
     links:
       upgrade_enterprise_edition: Oppgrader til Enterprise utgaven
       postgres_migration: Overføre installasjonen til PostgreSQL
@@ -3701,6 +3741,7 @@
   label_age: Alder
   label_ago: dager siden
   label_all: alle
+  label_all_uppercase: All
   label_all_time: alle tidspunkt
   label_all_words: Alle ord
   label_all_open_wps: Alle åpne
@@ -4228,6 +4269,7 @@
   label_role_new: Ny rolle
   label_role_grantable: Grantable role
   label_role_plural: Rolle
+  label_role_missing_permissions: "%{role} (missing required permissions)"
   label_role_search: Tilordne rolle til nye medlemmer
   label_scm: SCM
   label_scroll_left: Bla til venstre
@@ -4454,7 +4496,7 @@
       you_have: Du har
     logo_alt_text: Logo
     mention:
-      subject: "%{user_name} har nevnt deg i #%{id} – %{subject}"
+      subject: "%{user_name} mentioned you in %{id} - %{subject}"
     notification:
       center: Til varslingssenter
       see_in_center: Se kommentar i varslingssenter
@@ -4489,10 +4531,10 @@
       note: 'Note: “%{note}”'
     sharing:
       work_packages:
-        allowed_actions_html: You may %{allowed_actions} this work package. This can change depending on your project role and permissions.
+        allowed_actions_html: 'You have the following permissions on this work package: %{allowed_actions}. This can change depending on your project role and permissions.'
         create_account: For å få tilgang til denne arbeidspakken, må du opprette og aktivere en konto for %{instance}.
         open_work_package: Åpne arbeidspakke
-        subject: 'Arbeidspakke #%{id} ble delt med deg'
+        subject: Work package %{id} was shared with you
         enterprise_text: Del arbeidspakker med brukere som ikke er medlemmer i prosjektet.
         summary:
           user: "%{user} delte en arbeidspakke med deg %{role_rights} rettigheter"
@@ -4703,6 +4745,18 @@
     text_getting_started_description: Få en rask oversikt over prosjektledelse og teamsamarbeid med OpenProject. Du kan starte denne videoen på nytt fra hjelp-menyen.
     welcome: Velkommen til %{app_title}
     select_language: Vennligst velg språk
+  open_project:
+    common:
+      work_package_card_component:
+        menu:
+          label_actions: Work package actions
+      work_package_card_box_component:
+        header:
+          label_actions: Open menu
+          label_work_package_count:
+            zero: No work packages
+            one: "%{count} work package"
+            other: "%{count} work packages"
   permission_add_work_package_comments: Add comments
   permission_add_work_packages: Legg til arbeidspakker
   permission_add_messages: Skriv meldinger
@@ -4720,7 +4774,6 @@
   permission_add_work_package_watchers: Legg til overvåker
   permission_assign_versions: Tilordne versjoner
   permission_browse_repository: Skrivebeskyttet tilgang til arkivet (bla og utsjekking)
-  permission_change_wiki_parent_page: Endre overordnet wiki-side
   permission_change_work_package_status: Endre status på arbeidspakke
   permission_change_work_package_status_explanation: Tillater endring av status uten å legge til arbeidspakker
   permission_comment_news: Kommenter nyheter
@@ -4735,8 +4788,6 @@
   permission_delete_own_messages: Slette egne meldinger
   permission_delete_reportings: Slett rapporteringer
   permission_delete_timelines: Slett tidslinjer
-  permission_delete_wiki_pages: Slett wiki-sider
-  permission_delete_wiki_pages_attachments: Slett vedlegg
   permission_edit_work_package_comments: Moderate comments
   permission_edit_work_package_comments_explanation: 'Caution: Users with this permission are able to edit anyone''s comment.'
   permission_edit_work_packages: Rediger arbeidspakker
@@ -4756,12 +4807,10 @@
   permission_edit_wiki_pages: Rediger wiki-sider
   permission_export_work_packages: Eksporter arbeidspakker
   permission_export_projects: Export projects
-  permission_export_wiki_pages: Eksportèr wiki-sider
   permission_invite_members_by_email: Invite members by email
   permission_invite_members_by_email_explanation: 'Allows users to invite new members by email. Invited users will receive an email with a link to set their password and activate their account. Depends on the permission to manage members
 
     '
-  permission_list_attachments: List vedlegg
   permission_log_own_time: Logg egen tid
   permission_log_time: Logg tid for andre brukere
   permission_manage_forums: Administrere forum
@@ -4776,7 +4825,6 @@
   permission_manage_subtasks: Administrere arbeidspakkehierarkier
   permission_manage_versions: Administrere versjoner
   permission_manage_wiki: Administrere wiki
-  permission_manage_wiki_menu: Administrere wiki-meny
   permission_manage_own_working_times: Manage own working times
   permission_manage_own_working_times_explanation: 'Allows users to manage their own working times, and personal non-working days.
 
@@ -4786,8 +4834,6 @@
 
     '
   permission_move_work_packages: Flytt arbeidspakker
-  permission_protect_wiki_pages: Beskytt wiki-sider
-  permission_rename_wiki_pages: Gi nytt navn til wiki-sider
   permission_save_queries: Lagre visninger
   permission_search_project: Søk i prosjekt
   permission_select_custom_fields: Velg egendefinerte felt
@@ -5166,6 +5212,9 @@
   setting_mail_handler_body_delimiter_regex: Avkort e-post som samsvarer med denne regex
   setting_mail_handler_ignore_filenames: Ignorert e-postvedlegg
   setting_new_project_user_role_id: Rolle gitt til en ikke-administrativ bruker som oppretter et prosjekt
+  setting_new_project_user_role_id_caption: 'Only roles that include the permissions to edit project attributes and to manage members are listed, so that the creator can complete the project setup.
+
+    '
   setting_new_project_send_confirmation_email: Send notification to author when creating a new project
   setting_new_project_notification_text: Notification text
   setting_password_active_rules: Password requirements
@@ -5582,6 +5631,7 @@
   text_project_identifier_format: Must start with a lowercase letter. Only lowercase letters (a-z), numbers, dashes and underscores are allowed.
   text_reassign: 'Tilordne til arbeidspakke:'
   text_regexp_multiline: Denne regexen brukes i flerlinjemodus. f.eks ^---\s+
+  text_rename_wiki_page: Rename wiki page
   text_repository_usernames_mapping: |-
     Velg eller oppdater OpenProject-brukeren knyttet til hvert enkelt brukernavn i pakkebrønn-loggen.
     Brukere med samme OpenProject- og pakkebrønn-brukernavn eller e-post tilknyttes automatisk.
@@ -5761,10 +5811,13 @@
           same_as_work: Sett til samme verdi som arbeid.
     permissions:
       comment: Kommentar
+      comment_verb: comment
       comment_description: Kan se og kommentere denne arbeidspakken.
       edit: Rediger
+      edit_verb: edit
       edit_description: Kan vise, kommentere og redigere denne arbeidspakken.
       view: Vis
+      view_verb: view
       view_description: Kan se denne arbeidspakken.
     reminders:
       label_remind_at: Dato
@@ -6012,9 +6065,6 @@
       scopes: Tilganger
       successful_application_revocation: Tilbaketrekking av appen %{application_name} vellykket.
       none_given: Ingen OAuth-applikasjoner har blitt gitt tilgang til brukerkontoen din.
-    x_active_tokens:
-      one: en aktiv nøkkel
-      other: "%{count} aktive nøkler"
     flows:
       authorization_code: Autorisasjon kode flyt
       client_credentials: Kundens innloggingsflyt
@@ -6024,8 +6074,10 @@
     client_credentials_impersonation_html: 'Som standard gir OpenProject OAuth 2.0 autorisasjon via %{authorization_code_flow_link}. Du kan eventuelt aktivere %{client_credentials_flow_link}, men du må oppgi en bruker som forespørselen blir utført på vegne av.
 
       '
+    confirm_revoke_my_application:
+      one: Do you really want to remove this application? This will revoke one token active for it.
+      other: Do you really want to remove this application? This will revoke %{count} tokens active for it.
     authorization_error: Det oppstod en godkjenningsfeil.
-    revoke_my_application_confirmation: Vil du virkelig fjerne denne applikasjonen? Dette vil fjerne %{token_count} aktive nøkler for den.
     my_registered_applications: Registrerte OAuth-søknader
   oauth_client:
     urn_connection_status:

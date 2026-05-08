@@ -118,7 +118,7 @@ de:
       description: Verwenden Sie dieses Tool, um Daten aus Ihrer Jira-Instanz zu importieren. Sie können mehrere Jira-Hosts konfigurieren und auswählen, was bei jedem Importlauf importiert werden soll.
       errors:
         cannot_delete_with_imports: Jira-Hosts mit laufenden Importen können nicht gelöscht werden
-        custom_field_creation_failed: 'Failed to create custom field ''%{name}'': %{message}'
+        custom_field_creation_failed: 'Das nutzerdefinierte Feld ''%{name}'' konnte nicht erstellt werden: %{message}'
       blank:
         title: Noch keine Jira-Hosts konfiguriert
         description: Konfigurieren Sie einen Jira-Host, um mit dem Import von Elementen aus Jira in diese OpenProject-Instanz zu beginnen.
@@ -126,8 +126,12 @@ de:
         title: Jira-Konfiguration
         new: Neue Konfiguration
       banner:
-        title: Eingeschränkte Importfähigkeiten
-        description: 'Der Jira-Migrator befindet sich derzeit in der Betaphase und kann nur grundlegende Daten importieren: Projekte, Tickets (Name, Titel, Beschreibung, Anhänge), Nutzer (Name, E-Mail, Projektmitgliedschaft), Status und Typen. Es kann keine Workflows, benutzerdefinierten Felder, Ticketbeziehungen oder Berechtigungen importieren. Wir unterstützen derzeit nur die Jira Server/Data Center Versionen 10.x und 11.x. Cloud-Instanzen werden derzeit nicht unterstützt.'
+        title: Beta - Probieren Sie es aus!
+        description: Dieser Jira Migrator befindet sich derzeit in der Beta-Phase. Wir unterstützen derzeit nur Jira Server/Data Center Versionen 10.x und 11.x. Cloud-Instanzen werden derzeit nicht unterstützt.
+        contribution_callout: 'Bitte helfen Sie uns, den Jira Migrator mit Ihrem Feedback und Ihren privaten Datenspenden zu verbessern. Sie können [der Entwicklergemeinschaft](link) des Jira Migrator beitreten.
+
+          '
+        supported_versions: ''
       form:
         fields:
           name: Name
@@ -155,7 +159,7 @@ de:
         connection_timeout: 'Die Verbindung zum Jira-Server wurde unterbrochen: %{message}'
         parse_error: 'Die Jira API-Antwort konnte nicht gelesen werden: %{message}'
         api_error: Jira API hat den Fehlerstatus %{status} zurückgegeben
-        401_error: Jira API returned a 401 error. Your authentication token may have expired or lack the required permissions. Please ensure the token belongs to a Jira administrator.
+        401_error: Jira API hat einen 401-Fehler zurückgegeben. Ihr Authentifizierungs-Token ist möglicherweise abgelaufen oder Sie haben nicht die erforderlichen Berechtigungen. Bitte stellen Sie sicher, dass das Token einem Jira-Administrator gehört.
       columns:
         projects: Projekte
         last_change: Letzte Änderung
@@ -242,8 +246,10 @@ de:
               caption_done: Abgeschlossen
               label_info: Bitte beachten Sie, dass dieses Import-Tool in der Beta ist und nicht alle Arten von Daten importieren kann. Hier ist eine Zusammenfassung dessen, was die Jira Instanz für den Import bietet und was dieses Tool gerade importieren kann.
               description: Wählen Sie aus den verfügbaren Daten, die Sie aus der Host-Jira-Instanz abrufen, die Daten aus, die Sie importieren möchten.
-              label_available_data: Verfügbare Daten
-              label_not_available_data: Nicht verfügbar für den Import
+              label_supported_data: Unterstützte Daten
+              label_coming_soon: Kommt bald (Q2 2026)
+              label_coming_later: Kommt später
+              label_available_server_data: Verfügbare Daten auf %{server_info}
               button_select_projects: Projekte zum Importieren auswählen
               button_continue: Fortfahren
               label_import: Wählen Sie die Projekte aus, die Sie importieren möchten.
@@ -252,17 +258,23 @@ de:
               label_progress: Abrufen von Daten aus Jira...
               elements:
                 relations: Beziehungen zwischen Tickets
+                project_ids: Projektkennungen
+                issue_ids: Ticketkennungen
+                sprints: Sprint-Zuweisungen
                 workflows: Workflows auf Projektebene
-                users: Accounts
-                sprints: Sprints
                 schemes: Schemas
-                permissions: Benutzer-, Gruppen- und Projektberechtigungen
+                permissions: Berechtigungen
+                projects: Projekte
+                issues: Tickets
+                issue_details: Beschreibung, Verlaud, Kommentare und Anhänge
+                custom_fields: Ein Teil der benutzerdefinierten Felder
+                users: Beteiligte Benutzer und Gruppen
             confirm_import:
               title: Daten importieren
               caption: Überprüfen Sie Ihre Importeinstellungen und starten Sie den Import
               caption_done: Abgeschlossen
-              label_available_data: Verfügbare Daten zum Importieren
-              label_users_import_explanation: Users that are involved in selected projects (group memberships included)
+              label_available_data: Zu importierende Daten
+              label_users_import_explanation: Nutzer, die an ausgewählten Projekten beteiligt sind (einschließlich Gruppenmitgliedschaften)
               button_start: Import starten
               description: Sie sind dabei, einen Import mit den folgenden Einstellungen zu starten.
               label_progress: Import läuft...
@@ -270,33 +282,33 @@ de:
             import_result:
               title: Importlauf-Ergebnisse
               caption: Importlauf überprüfen oder Import rückgängig machen
-              info: Import erfolgreich ausgeführt.
+              info: Der Importlauf war erfolgreich.
               label_results: Importiert
               label_revert: Import rückgängig machen
               button_revert: Import rückgängig machen
-              button_done: Import abschließen
-              preview_description: Die importierten Daten befinden sich derzeit im Überprüfungsmodus. Klicken Sie auf "Import abschließen", um den Import dauerhaft zu machen, oder auf "Import rückgängig machen", um alle in diesem Importlauf vorgenommenen Änderungen rückgängig zu machen.
-              label_finalize_import: Import abschließen
+              button_done: Import bestätigen
+              preview_description: Die importierten Daten befinden sich derzeit im Überprüfungsmodus. Klicken Sie auf "Import bestätigen", um den Import dauerhaft zu machen, oder auf "Import rückgängig machen", um alle in diesem Importlauf vorgenommenen Änderungen rückgängig zu machen.
+              label_finalize_import: Import bestätigen
               label_finalizing: Import wird abgeschlossen...
-              label_finalizing_done: Import abgeschlossen.
+              label_finalizing_done: Import bestätigt.
               label_revert_progress: Import wird rückgängig gemacht...
               label_reverted: Import rückgängig gemacht.
           select_dialog:
             filter_projects: Nach Text filtern
           import_dialog:
-            title: Diesen Import starten?
+            title: Bitte stellen Sie sicher, dass Sie ein Backup haben!
             confirm_button: Import starten
-            description: 'Dieser Importer ist eine Alpha-Funktion. Er ist noch nicht in der Lage, alle Daten aus Jira zu importieren und könnte unvollständige Daten auf dieser OpenProject-Instanz hinterlassen. <b>Verwenden Sie keine Produktionsumgebung und erstellen Sie vor dem Start eine Sicherungskopie Ihrer OpenProject-Daten.</b>
+            description: 'Importe ändern Ihre OpenProject-Konfiguration. Nach dem Import haben Sie die Möglichkeit, die Änderungen zu überprüfen. Während der Überprüfung haben Sie die Möglichkeit, den Import rückgängig zu machen oder zu bestätigen. Nachdem Sie den Import bestätigt haben, ist eine Rückgängigmachung nicht mehr möglich. Stellen Sie daher sicher, dass Sie [eine Sicherungskopie Ihrer OpenProject-Instanz](link) haben, bevor Sie fortfahren.
 
               '
-            confirm: Ich habe verstanden und die notwendigen Vorbereitungen getroffen
+            confirm: Ich verstehe und habe ein Backup
           revert_dialog:
             title: Diesen Import dauerhaft rückgängig machen?
-            description: Dadurch werden alle importierten Objekte (einschließlich ganzer Projekte) gelöscht, auch wenn es nach dem Import in OpenProject Nutzeraktivitäten in diesen Projekten gab.
+            description: Dadurch werden alle importierten Objekte (einschließlich ganzer Projekte) gelöscht.
             confirm: Mir ist bewusst, dass diese Rückgängigmachung die Daten dauerhaft löscht
           finalize_dialog:
-            title: Diesen Import abschließen?
-            description: Sobald dieser Import abgeschlossen ist, kann er nicht mehr rückgängig gemacht werden. Alle importierten Daten werden dann dauerhaft importiert.
+            title: Diesen Import bestätigen?
+            description: Sobald der Import bestätigt ist, kann er nicht mehr rückgängig gemacht werden. Alle importierten Daten werden dann dauerhaft übernommen.
             confirm: Ich verstehe, dass diese Aktion nicht rückgängig gemacht werden kann
             confirm_button: Verstanden
           select_projects:
@@ -449,8 +461,12 @@ de:
         ignore: Änderungen ignorieren
         save: Änderungen speichern und fortfahren
       role_selector:
+        title: Select roles
         label: 'Rolle: %{role}'
         no_role: Rolle auswählen
+        roles:
+          one: "%{count} role selected"
+          other: "%{count} roles selected"
       blankslate:
         title: Keine Statusübergänge konfiguriert
         description: Status hinzufügen, um mit der Konfiguration von Arbeitsabläufen für diese Rolle zu beginnen
@@ -1098,6 +1114,8 @@ de:
       no_results_title_text: Es gibt aktuell keine Neuigkeiten.
       no_results_content_text: Neuigkeit hinzufügen
   roles:
+    edit:
+      default_for_new_projects_warning: 'This role is configured as the default role given to non-admin users who create a project. Do not remove the following permissions, otherwise project creators will be unable to complete the setup of their newly created projects:'
     permissions:
       section_check_all_label: Alle %{module} Berechtigungen zuweisen
       section_uncheck_all_label: Alle %{module} Berechtigungen zuweisen
@@ -1109,6 +1127,8 @@ de:
       matrix_check_uncheck_all_in_row_label_html: Umschalten von <em>%{permission}</em> Berechtigung für alle Rollen
       matrix_check_uncheck_all_in_col_label_html: Umschalten aller %{module} Berechtigungen für die Rolle <em>%{role}</em>
   users:
+    force_password_change_hint: The user must set a new password on their next login. Automatically enabled when sending credentials via email.
+    send_information_hint: Emails the password in plain text. When checked, the user will be required to change their password on first login.
     autologins:
       prompt: "%{num_days} lang angemeldet bleiben"
     sessions:
@@ -1373,22 +1393,22 @@ de:
         mode:
           from_role:
             label: Copy to other roles
-            caption: Copy the current workflow to one or more roles inside the same work package type. If the selected role already has a workflow the current one will be overwritten.
+            caption: Kopieren Sie den aktuellen Workflow auf eine oder mehrere Rollen in demselben Typ. Wenn die ausgewählte Rolle bereits über einen Workflow verfügt, wird der aktuelle Workflow überschrieben.
           from_type:
-            label: Copy to another type
-            caption: Copy the current workflow to another work packages type. If the selected type already has a workflow the current one will be overwritten. This affects all roles.
+            label: In einen anderen Typ kopieren
+            caption: Kopieren Sie den aktuellen Workflow auf einen anderen Arbeitspaket-Typ. Wenn dieser bereits einen Workflow besitzt, wird der aktuelle überschrieben. Dies betrifft alle Rollen.
       from_roles:
         create:
           notice:
-            one: Successfully copied workflow to '%{role_name}' role.
-            other: Successfully copied workflow to %{count} roles.
+            one: Workflow erfolgreich in die Rolle '%{role_name}' kopiert.
+            other: Workflow erfolgreich in %{count} Rollen kopiert.
       from_types:
         create:
           notice:
-            one: Successfully copied workflow to '%{type_name}' type.
-            other: Successfully copied workflow to %{count} types.
+            one: Workflow erfolgreich in den Typ '%{type_name}' kopiert.
+            other: Workflow erfolgreich in %{count} Typen kopiert.
       new:
-        title: Copy workflow of "%{source_type}"
+        title: Workflow von "%{source_type}" kopieren
     form:
       matrix_caption: Workflow-Matrix
       matrix_caption_assignee: Workflow-Matrix für Zugewiesene
@@ -1400,28 +1420,28 @@ de:
       matrix_check_uncheck_all_in_col_label_html: Übergänge von allen alten Status zu <em>%{new_status}</em> umschalten
     index:
       type_filter:
-        label: Filter by type name…
+        label: Typen nach Name filtern…
     page_headers:
       index_component:
-        description: Configure status transitions for each work package type.
+        description: Konfigurieren Sie die Statusübergänge für jeden Arbeitspaket-Typ.
   work_flows:
     index:
       no_results_title_text: Derzeit gibt es keine Workflows.
   work_packages:
     delete_dialog:
-      title: Delete work package
-      heading: Permanently delete this work package?
-      description: Are you sure you want to delete the work package "%{name}"?
-      confirm_descendants_deletion: I acknowledge that ALL descendants of this work package will be recursively removed.
-      cross_project_warning: 'Work packages from the following projects will be deleted: %{projects}'
+      title: Arbeitspaket löschen
+      heading: Dieses Arbeitspaket unwiderruflich löschen?
+      description: Sind Sie sicher, dass Sie das Arbeitspaket "%{name}" löschen möchten?
+      confirm_descendants_deletion: Ich bestätige, dass ALLE Unteraufgaben der hier aufgeführten Arbeitspakete entfernt werden.
+      cross_project_warning: 'Die zur Löschung vorgesehenen Arbeitspakete stammen aus folgenden Projekten: %{projects}'
     bulk_delete_dialog:
-      title: Delete %{count} work packages
-      heading: Permanently delete these %{count} work packages?
-      description: 'The following work packages, including children and all associated data, will permanently be deleted:'
-      description_with_children: 'The following work packages, including child work packages, and all associated data will be permanently deleted:'
-      confirm_children_deletion: I acknowledge that all selected work packages and their children will be permanently deleted.
-      cross_project_warning: 'These work packages span multiple projects: %{projects}'
-      children_label: 'The following children will also be deleted:'
+      title: "%{count} Arbeitspakete löschen"
+      heading: Diese %{count} Arbeitspakete unwiderruflich löschen?
+      description: 'Die folgenden Arbeitspakete, einschließlich der Unteraufgaben und aller zugehörigen Daten, werden dauerhaft gelöscht:'
+      description_with_children: 'Die folgenden Arbeitspakete, einschließlich der Unteraufgaben und aller zugehörigen Daten, werden dauerhaft gelöscht:'
+      confirm_children_deletion: Ich bestätige, dass alle ausgewählten Arbeitspakete inklusive ihrer Unteraufgaben dauerhaft gelöscht werden.
+      cross_project_warning: 'Diese Arbeitspakete umfassen mehrere Projekte: %{projects}'
+      children_label: 'Die folgenden Unteraufgaben werden ebenfalls gelöscht:'
     datepicker_modal:
       banner:
         description:
@@ -1882,7 +1902,7 @@ de:
         identity_url: Identity URL
         parent: Übergeordnete Gruppe
         organizational_unit: Organisationseinheit
-        group_users: Group users
+        group_users: Benutzer der Gruppe
       group_detail:
         parent: Übergeordnete Gruppe
         organizational_unit: Organisationseinheit
@@ -1957,7 +1977,7 @@ de:
         duration: Dauer
         end_insertion: Ende der Einfügung
         end_deletion: Ende des Löschvorgangs
-        identifier: Identifier
+        identifier: Kennung
         ignore_non_working_days: Nicht-Arbeitstage ignorieren
         include_non_working_days:
           title: Werktage
@@ -1984,20 +2004,20 @@ de:
         version: Version
         watcher: Beobachter
       ordered_persisted_query_entity:
-        persisted_query: Persisted query
-        entity: Entity
+        persisted_query: Gespeicherte Abfrage
+        entity: Entität
         position: Position
       persisted_query:
         name: Name
-        views: Views
-        filters: Filters
-        orders: Orders
-        selects: Selects
+        views: Ansichten
+        filters: Filter
+        orders: Sortierungen
+        selects: Ausgewählte Attribute
       persisted_view:
         name: Name
-        query: Query
-        parent: Parent view
-        public: Public
+        query: Abfrage
+        parent: Übergeordnete Ansicht
+        public: Öffentlich
       user_card_view:
         secondary_info: Secondary info
         show_status_badge: Show status badge
@@ -2521,6 +2541,7 @@ de:
       unsupported_storage_type: ist kein unterstützter Speichertyp.
       storage_error: Es ist ein Fehler bei der Speicherverbindung aufgetreten.
       invalid_input: Die Eingabe ist ungültig.
+      invalid_child_for_parent: is not allowed as a parent for this view type.
   activity:
     item:
       created_by_on: erstellt von %{user} am %{datetime}
@@ -3395,6 +3416,26 @@ de:
   general_text_false: falsch
   gui_validation_error: 1 Fehler
   gui_validation_error_plural: "%{count} Fehler"
+  health_reports:
+    report_component:
+      checks:
+        failures:
+          one: "%{count} check failed"
+          other: "%{count} checks failed"
+        success: All checks passed
+        warnings:
+          one: "%{count} check returned a warning"
+          other: "%{count} checks returned a warning"
+      summary:
+        failure: Some checks failed and the system does not work as expected.
+        success: All connections and systems are working as expected.
+        warning: Some checks returned a warning. This can lead to unexpected behaviour.
+    result_component:
+      status:
+        failed: Failed
+        passed: Passed
+        skipped: Skipped
+        warning: Warning
   homescreen:
     additional:
       projects: Neueste sichtbare Projekte in dieser Instanz.
@@ -3408,18 +3449,17 @@ de:
         header: Lesen Sie über neue Funktionen und Updates.
         learn_about: Erfahren Sie mehr über die neuen Funktionen
         missing: Es gibt noch keine hervorgehobenen Funktionen.
-        '17_3':
+        '17_4':
           new_features_title: 'Dieses Release enthält verschiedene neue Funktionen und Verbesserungen, wie z. B:
 
             '
           new_features_list:
-            line_0: 'Großes Update für Agile: dedizierte Sprint-Objekte, alle Arbeitspakete in Backlogs sichtbar und automatische Erstellung von Sprint Boards.'
-            line_1: Direktes Bearbeiten von Projektattributen auf der Projektübersicht.
-            line_2: Vorlagen für Besprechungen tielen (Basic Plan und höher).
-            line_3: Bessere Suche in Modulen wie Zeit und Kosten, Boards und mehr.
-            line_4: Option zum sicheren Ändern von Projekt-Kennungen.
-            line_5: Verbesserte Workflow-Konfiguration für Administratoren.
-            line_6: Action Boards nun in der freien Community-Version verfügbar.
+            line_0: Jira Migrator mit Unterstützung für grundlegende benutzerdefinierte Felder.
+            line_1: Backlog Buckets zur Strukturierung und Priorisierung von Arbeitspaketen während des Backlog-Refinement.
+            line_2: Leichteres "drag and drop" und verbesserte Optionen beim Verschieben im Modul Backlogs.
+            line_3: Schaltflächen zum Starten und Beenden von Sprints in der Kopfzeile des Sprints.
+            line_4: Kopieren Sie Workflow-Einstellungen zwischen Rollen.
+            line_5: Widget 'Meine Besprechungen' auf der Home- und Projektübersichtsseite.
     links:
       upgrade_enterprise_edition: Auf Enterprise Edition upgraden
       postgres_migration: Migration Ihrer Installation zu PostgreSQL
@@ -3697,6 +3737,7 @@ de:
   label_age: Geändert vor
   label_ago: vor (Tage)
   label_all: alle
+  label_all_uppercase: All
   label_all_time: gesamter Zeitraum
   label_all_words: Alle Wörter
   label_all_open_wps: Alle offenen
@@ -4224,6 +4265,7 @@ de:
   label_role_new: Neue Rolle
   label_role_grantable: Zuweisbare Rolle
   label_role_plural: Rollen
+  label_role_missing_permissions: "%{role} (missing required permissions)"
   label_role_search: Rolle für neue Mitglieder zuweisen
   label_scm: Versionskontrollsystem
   label_scroll_left: Nach links scrollen
@@ -4450,7 +4492,7 @@ de:
       you_have: Sie haben
     logo_alt_text: Logo
     mention:
-      subject: "%{user_name} erwähnte Sie in #%{id} - %{subject}"
+      subject: "%{user_name} mentioned you in %{id} - %{subject}"
     notification:
       center: Zur Benachrichtigungszentrale
       see_in_center: Kommentar in Benachrichtigungszentrale öffnen
@@ -4488,7 +4530,7 @@ de:
         allowed_actions_html: 'Sie haben auf diesem Arbeitspakte folgende Berechtigungen: %{allowed_actions}. Dies kann sich je nach Ihrer Projektrolle und Berechtigungen ändern.'
         create_account: Um auf dieses Arbeitspaket zuzugreifen, müssen Sie ein Konto für %{instance} erstellen und aktivieren.
         open_work_package: Arbeitspaket öffnen
-        subject: 'Arbeitspaket #%{id} wurde mit Ihnen geteilt'
+        subject: Work package %{id} was shared with you
         enterprise_text: Teilen Sie Arbeitspakete mit Benutzern, die nicht Mitglieder des Projekts sind.
         summary:
           user: "%{user} hat Ihnen ein Arbeitspaket mit %{role_rights} Rechten geteilt"
@@ -4703,6 +4745,18 @@ de:
     text_getting_started_description: Erhalten Sie einen schnellen Überblick über die Projektverwaltung und die Zusammenarbeit mit OpenProject. Sie können dieses Video über das Hilfe-Menü neu starten.
     welcome: Willkommen zu %{app_title}
     select_language: Bitte wählen Sie Ihre Sprache
+  open_project:
+    common:
+      work_package_card_component:
+        menu:
+          label_actions: Work package actions
+      work_package_card_box_component:
+        header:
+          label_actions: Open menu
+          label_work_package_count:
+            zero: No work packages
+            one: "%{count} work package"
+            other: "%{count} work packages"
   permission_add_work_package_comments: Kommentare hinzufügen
   permission_add_work_packages: Arbeitspakete hinzufügen
   permission_add_messages: Forenbeiträge hinzufügen
@@ -4720,7 +4774,6 @@ de:
   permission_add_work_package_watchers: Beobachter hinzufügen
   permission_assign_versions: Versionen zuweisen
   permission_browse_repository: Lesezugriff auf Projektarchiv (in OpenProject und Checkout)
-  permission_change_wiki_parent_page: Übergeordnete Wiki-Seite ändern
   permission_change_work_package_status: Arbeitspaket-Status ändern
   permission_change_work_package_status_explanation: Ermöglicht das Ändern des Status ohne Berechtigung Arbeitspakete zu bearbeiten
   permission_comment_news: Nachricht kommentieren
@@ -4735,8 +4788,6 @@ de:
   permission_delete_own_messages: Eigene Forenbeiträge löschen
   permission_delete_reportings: Statusberichte löschen
   permission_delete_timelines: Zeitplan-Reporte löschen
-  permission_delete_wiki_pages: Wiki-Seiten löschen
-  permission_delete_wiki_pages_attachments: Anhänge löschen
   permission_edit_work_package_comments: Kommentare moderieren
   permission_edit_work_package_comments_explanation: 'Achtung: Benutzer mit dieser Berechtigung können den Kommentar eines anderen Benutzers bearbeiten.'
   permission_edit_work_packages: Arbeitspakete bearbeiten
@@ -4756,12 +4807,10 @@ de:
   permission_edit_wiki_pages: Wiki-Seiten bearbeiten
   permission_export_work_packages: Arbeitspakete exportieren
   permission_export_projects: Projekte exportieren
-  permission_export_wiki_pages: Wiki-Seiten exportieren
   permission_invite_members_by_email: Mitglieder per E-Mail einladen
   permission_invite_members_by_email_explanation: 'Ermöglicht es Benutzern, neue Mitglieder per E-Mail einzuladen. Eingeladene Benutzer erhalten eine E-Mail mit einem Link, über den sie ihr Passwort festlegen und ihr Konto aktivieren können. Abhängig von der Berechtigung zur Mitgliederverwaltung
 
     '
-  permission_list_attachments: Anhänge auflisten
   permission_log_own_time: Eigenen Zeitaufwand verbuchen
   permission_log_time: Zeitaufwand für andere Benutzer verbuchen
   permission_manage_forums: Foren verwalten
@@ -4776,7 +4825,6 @@ de:
   permission_manage_subtasks: Arbeitspaket-Hierarchien verwalten
   permission_manage_versions: Versionen verwalten
   permission_manage_wiki: Wiki verwalten
-  permission_manage_wiki_menu: Wiki-Menü verwalten
   permission_manage_own_working_times: Eigene Arbeitszeiten verwalten
   permission_manage_own_working_times_explanation: 'Ermöglicht es Benutzern, ihre eigenen Arbeitszeiten und persönlichen arbeitsfreien Tage zu verwalten.
 
@@ -4786,8 +4834,6 @@ de:
 
     '
   permission_move_work_packages: Arbeitspakete verschieben
-  permission_protect_wiki_pages: Wiki-Seiten schützen
-  permission_rename_wiki_pages: Wiki-Seiten umbenennen
   permission_save_queries: Ansichten speichern
   permission_search_project: Projekt suchen
   permission_select_custom_fields: Benutzerdefinierte Felder verwalten
@@ -5164,6 +5210,9 @@ de:
   setting_mail_handler_body_delimiter_regex: Schneide E-Mails nach Zeile ab, die diesem regulären Ausdruck entspricht
   setting_mail_handler_ignore_filenames: Ignorierte E-Mail-Anhänge
   setting_new_project_user_role_id: Rolle, die einem Nicht-Administrator zugeordnet wird, der ein Projekt erstellt
+  setting_new_project_user_role_id_caption: 'Only roles that include the permissions to edit project attributes and to manage members are listed, so that the creator can complete the project setup.
+
+    '
   setting_new_project_send_confirmation_email: Benachrichtigung an den Autor senden, wenn ein neues Projekt erstellt wird
   setting_new_project_notification_text: Benachrichtigungstext
   setting_password_active_rules: Password requirements
@@ -5578,6 +5627,7 @@ de:
   text_project_identifier_format: Muss mit einem Kleinbuchstaben beginnen. Nur Kleinbuchstaben (a-z), Zahlen, Bindestriche und Unterstriche sind erlaubt.
   text_reassign: 'Zuweisung zu Arbeitspaket:'
   text_regexp_multiline: Der reguläre Ausdruck wird in einem mehrzeiligen Modus angewandt, z.B. ^---\s+
+  text_rename_wiki_page: Rename wiki page
   text_repository_usernames_mapping: |-
     Bitte legen Sie die Zuordnung der OpenProject-Benutzer zu den Benutzernamen der Commit-Log-Meldungen des Projektarchivs fest.
     Benutzer mit identischen OpenProject- und Projektarchiv-Benutzernamen oder -E-Mail-Adressen werden automatisch zugeordnet.
@@ -5757,10 +5807,13 @@ de:
           same_as_work: Auf denselben Wert wie Aufwand gesetzt.
     permissions:
       comment: Kommentar
+      comment_verb: kommentieren
       comment_description: Kann dieses Arbeitspaket anzeigen und kommentieren.
       edit: Bearbeiten
+      edit_verb: editieren
       edit_description: Kann dieses Arbeitspaket ansehen, kommentieren und editieren.
       view: Ansicht
+      view_verb: sehen
       view_description: Kann dieses Arbeitspaket ansehen.
     reminders:
       label_remind_at: Datum
@@ -6008,9 +6061,6 @@ de:
       scopes: Berechtigungen
       successful_application_revocation: Widerrufen von %{application_name} erfolgreich.
       none_given: Keine OAuth-Anwendung erhalten Zugriff auf Ihr Benutzerkonto.
-    x_active_tokens:
-      one: ein aktiver Token
-      other: "%{count} aktive Token"
     flows:
       authorization_code: Autorisierungs-Code Anmeldefluss
       client_credentials: Client credentials Anmeldefluss
@@ -6020,8 +6070,10 @@ de:
     client_credentials_impersonation_html: 'Standardmäßig bietet OpenProject OAuth 2.0 Autorisierung via %{authorization_code_flow_link}. Sie können optional %{client_credentials_flow_link} aktivieren, aber Sie müssen einen Benutzer angeben, in dessen Namen Anfragen ausgeführt werden.
 
       '
+    confirm_revoke_my_application:
+      one: Do you really want to remove this application? This will revoke one token active for it.
+      other: Do you really want to remove this application? This will revoke %{count} tokens active for it.
     authorization_error: Ein Autorisierungsfehler ist aufgetreten.
-    revoke_my_application_confirmation: Möchten Sie diese Anwendung wirklich entfernen? Dies wird %{token_count} aktive Token widerrufen.
     my_registered_applications: Registrierte OAuth-Anwendungen
   oauth_client:
     urn_connection_status:
