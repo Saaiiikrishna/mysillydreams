@@ -26,6 +26,10 @@ en:
           attributes:
             end_date:
               greater_than_start_date: "must be after the start date."
+        resource_work_package_list:
+          attributes:
+            query:
+              must_be_work_package_query: "must be a work package query."
 
   plugin_openproject_resource_management:
     name: "OpenProject Resource Management"
