@@ -117,7 +117,7 @@ class Filters::Inputs::BaseFilterForm < ApplicationForm
     group.html_content do
       render(Primer::Beta::IconButton.new(
                icon: :trash,
-               scheme: :invisible,
+               scheme: :danger,
                classes: "advanced-filters--remove-filter",
                aria: { label: I18n.t("button_delete") },
                data: {
