@@ -53,5 +53,9 @@ module Wikis
     def page_link_service
       @page_link_service ||= PageLinkService.new
     end
+
+    def can_manage_links?
+      helpers.current_user.allowed_in_project?(:manage_wiki_page_links, @work_package.project)
+    end
   end
 end

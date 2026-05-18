@@ -28,35 +28,12 @@
 # See COPYRIGHT and LICENSE files for more details.
 #++
 
-Rails.application.routes.draw do
-  namespace :admin do
-    namespace :settings do
-      resources :wiki_providers, controller: "/wikis/admin/wiki_providers", except: [:show] do
-        member do
-          get :confirm_destroy
-          get :edit_general_info
-          delete :replace_oauth_application
-        end
-        resource :oauth_client, controller: "/wikis/admin/oauth_clients", only: %i[new create] do
-          patch :update, on: :member
-        end
-      end
-    end
-  end
+module Wikis
+  class LinkExistingWikiPageDialogComponent < ApplicationComponent
+    include OpTurbo::Streamable
 
-  resources :projects, only: %i[] do
-    resources :work_packages, only: %i[] do
-      resources :wikis, only: %i[] do
-        collection do
-          resources :tab, only: %i[index], controller: "work_package_wikis_tab", as: "wikis_tab"
-        end
-      end
-    end
-  end
-
-  resources :wiki_page_links, controller: "wikis/page_links", only: %i[create destroy] do
-    collection do
-      get :link_existing_dialog
+    def system_arguments
+      options
     end
   end
 end

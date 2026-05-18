@@ -37,14 +37,23 @@ See COPYRIGHT and LICENSE files for more details.
         end
         header.with_column do
           render(Primer::Alpha::ActionMenu.new) do |menu|
-            menu.with_show_button(disabled: true) do |button|
+            menu.with_show_button(disabled: !can_manage_links?) do |button|
               button.with_leading_visual_icon(icon: :plus)
               button.with_trailing_action_icon(icon: :"triangle-down")
 
               t("wikis.buttons.wiki_page")
             end
 
-            menu.with_item(label: "placeholder item")
+            menu.with_item(
+              label: t(".add_existing"),
+              tag: :a,
+              href: link_existing_dialog_wiki_page_links_path,
+              data: { controller: "async-dialog" }
+            )
+            menu.with_item(
+              label: t(".create_new"),
+              disabled: true # work in progress
+            )
           end
         end
       end
