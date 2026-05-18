@@ -84,8 +84,9 @@ export class ProjectEditFieldComponent extends EditFieldComponent implements OnI
         { name: 'active', operator: '=' as FilterOperator, values: ['t'] },
     ];
 
-    if (isNewResource(this.resource) && this.change.value('type')) {
-      const typeId = idFromLink((this.change.value('type') as { href:string }).href);
+    const type = this.change.value<{ href:string }|null>('type');
+    if (isNewResource(this.resource) && type) {
+      const typeId = idFromLink(type.href);
       filters.push({ name: 'type_id', operator: '=' as FilterOperator, values: [typeId] });
     }
 
