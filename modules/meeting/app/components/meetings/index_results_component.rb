@@ -27,54 +27,25 @@
 #
 # See COPYRIGHT and LICENSE files for more details.
 # ++
+
 module Meetings
-  # rubocop:disable OpenProject/AddPreviewForViewComponent
-  class MeetingFiltersComponent < Filter::FilterComponent
-    # rubocop:enable OpenProject/AddPreviewForViewComponent
-    options :project
-
-    def turbo_requests? = true
-
-    def allowed_filters
-      super
-        .select { |f| allowed_filter?(f) }
-        .sort_by(&:human_name)
+  class IndexResultsComponent < ApplicationComponent
+    def initialize(grouped_meetings:, meetings:, project:, upcoming:)
+      super()
+      @grouped_meetings = grouped_meetings
+      @meetings = meetings
+      @project = project
+      @upcoming = upcoming
     end
 
-    protected
-
-    def additional_filter_attributes(filter)
-      case filter
-      when Queries::Meetings::Filters::AuthorFilter,
-           Queries::Meetings::Filters::AttendedUserFilter,
-           Queries::Meetings::Filters::InvitedUserFilter
-        {
-          autocomplete_options: {
-            component: "opce-user-autocompleter",
-            resource: "principals"
-          }
-        }
+    def content_component
+      if @grouped_meetings
+        Meetings::GroupedMeetingsComponent.new(grouped_meetings: @grouped_meetings, project: @project)
+      elsif @meetings.empty?
+        Meetings::BlankSlateComponent.new(project: @project)
       else
-        super
+        Meetings::TableComponent.new(rows: @meetings, current_project: @project, upcoming: @upcoming)
       end
-    end
-
-    private
-
-    def allowed_filter?(filter)
-      allowlist = [
-        Queries::Meetings::Filters::AttendedUserFilter,
-        Queries::Meetings::Filters::AuthorFilter,
-        Queries::Meetings::Filters::InvitedUserFilter,
-        Queries::Meetings::Filters::RecurringFilter,
-        Queries::Meetings::Filters::TimeFilter
-      ]
-
-      if project.nil?
-        allowlist << Queries::Meetings::Filters::ProjectFilter
-      end
-
-      allowlist.any? { |clazz| filter.is_a? clazz }
     end
   end
 end

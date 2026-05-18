@@ -45,6 +45,7 @@ module OpenProject::Meeting
                    {
                      meetings: %i[index show check_for_updates download_ics
                                   presentation generate_pdf_dialog history],
+                     "meetings/filters": %i[show],
                      "meetings/menus": %i[show],
                      work_package_meetings_tab: %i[index count],
                      recurring_meetings: %i[index show new create download_ics],

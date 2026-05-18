@@ -87,7 +87,7 @@ module Filter
     end
 
     def lazy_turbo_frame_src
-      public_send(lazy_loaded_path, **params.permit(:filters, :columns, :sortBy, :id, :query_id))
+      public_send(lazy_loaded_path, **params.permit(:filters, :columns, :sortBy, :id, :query_id, :project_id))
     end
 
     protected
