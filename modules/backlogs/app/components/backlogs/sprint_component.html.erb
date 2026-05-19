@@ -43,17 +43,24 @@ See COPYRIGHT and LICENSE files for more details.
         )
       ) do |list| %>
     <% list.with_header(title: sprint.name) do |header| %>
-      <% header.with_description do %>
-        <%= render(Backlogs::SprintStatusBadgeComponent.new(sprint:)) %>
-
-        <%= render(Primer::Beta::Text.new(classes: "velocity", aria: { live: "polite" })) do %>
-          <%= story_points_total %>&nbsp;<%= t(:"backlogs.points_label", count: story_points_total) %>
+      <% header.with_description(display: :flex, direction: :column, classes: "row-gap-2") do %>
+        <% if goal_text.present? %>
+          <%= render(Primer::Beta::Text.new(color: :muted, display: :block, mr: 2)) do %>
+            <%= goal_text %>
+          <% end %>
         <% end %>
+        <%= render(Primer::Alpha::Stack.new(direction: :horizontal)) do %>
+          <%= render(Backlogs::SprintStatusBadgeComponent.new(sprint:)) %>
 
-        <% if sprint.date_range_set? %>
-          <%= render(Primer::Beta::Text.new(role: :group, ml: :auto, mr: 2)) do %>
-            <%= render(Primer::Beta::Octicon.new(:calendar, size: :small, mr: 1)) %>
-            <%= format_date_range([sprint.start_date, sprint.finish_date]) %>
+          <%= render(Primer::Beta::Text.new(classes: "velocity", aria: { live: "polite" })) do %>
+            <%= story_points_total %>&nbsp;<%= t(:"backlogs.points_label", count: story_points_total) %>
+          <% end %>
+
+          <% if sprint.date_range_set? %>
+            <%= render(Primer::Beta::Text.new(role: :group, ml: :auto, mr: 2)) do %>
+              <%= render(Primer::Beta::Octicon.new(:calendar, size: :small, mr: 1)) %>
+              <%= format_date_range([sprint.start_date, sprint.finish_date]) %>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>

@@ -91,6 +91,10 @@ module Backlogs
       }
     end
 
+    def goal_text
+      sprint.goal_text_for(project)
+    end
+
     def story_points_total
       work_packages.filter_map(&:story_points).sum
     end

@@ -241,6 +241,24 @@ RSpec.describe Backlogs::SprintComponent, type: :component do
       end
     end
 
+    describe "sprint goal in header" do
+      context "when the sprint has a goal for the project" do
+        before do
+          create(:sprint_goal, sprint:, project:, text: "Ship the reporting dashboard")
+        end
+
+        it "renders the goal text" do
+          expect(rendered_component).to have_text("Ship the reporting dashboard")
+        end
+      end
+
+      context "when the sprint has no goal for the project" do
+        it "does not render goal text" do
+          expect(rendered_component).to have_no_css(".d-block.color-fg-muted")
+        end
+      end
+    end
+
     describe "sprint actions in header" do
       context "when the sprint is in planning with date range set" do
         let(:sprint) do
