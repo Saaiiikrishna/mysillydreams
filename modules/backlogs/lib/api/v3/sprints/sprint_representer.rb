@@ -39,6 +39,8 @@ module API
         include API::V3::Workspaces::LinkedResource
         include API::Decorators::DateProperty
 
+        self.to_preload = :goals
+
         self_link
 
         link :status do
@@ -60,8 +62,22 @@ module API
 
         date_property :finish_date
 
+        property :goal,
+                 render_nil: true,
+                 exec_context: :decorator,
+                 getter: ->(*) { goal_text }
+
         date_time_property :created_at
         date_time_property :updated_at
+
+        def initialize(model, current_user:, embed_links: false, goal_project: nil)
+          super(model, current_user:, embed_links:)
+          @goal_project = goal_project
+        end
+
+        def goal_text
+          @goal_project ? represented.goal_text_for(@goal_project) : nil
+        end
 
         def _type
           "Sprint"

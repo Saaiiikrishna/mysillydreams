@@ -71,5 +71,30 @@ RSpec.describe "API v3 Sprint resource on project", content_type: :json do
 
       it_behaves_like "unauthorized access"
     end
+
+    context "when a sprint has a goal for the project" do
+      before do
+        create(:sprint_goal, sprint:, project:, text: "Ship MVP")
+        get get_path
+      end
+
+      it "includes the goal in the response" do
+        expect(last_response.body)
+          .to be_json_eql("Ship MVP".to_json)
+          .at_path("_embedded/elements/1/goal")
+      end
+    end
+
+    context "when a sprint has no goal for the project" do
+      before do
+        get get_path
+      end
+
+      it "renders goal as null" do
+        expect(last_response.body)
+          .to be_json_eql(nil.to_json)
+          .at_path("_embedded/elements/0/goal")
+      end
+    end
   end
 end

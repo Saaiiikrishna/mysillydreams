@@ -23,6 +23,13 @@ properties:
     description: Sprint name
   description:
     $ref: "./formattable.yml"
+  goal:
+    type:
+      - "string"
+      - "null"
+    description: |-
+      The sprint goal for the contextual project. Returns null when no
+      project context is available.
   startDate:
     type:
       - "string"

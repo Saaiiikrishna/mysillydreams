@@ -32,6 +32,16 @@ module API
   module V3
     module Sprints
       class SprintCollectionRepresenter < ::API::Decorators::OffsetPaginatedCollection
+        attr_accessor :goal_project
+
+        collection :elements,
+                   getter: ->(*) {
+                     represented.map do |model|
+                       element_decorator.create(model, current_user:, goal_project:)
+                     end
+                   },
+                   exec_context: :decorator,
+                   embedded: true
       end
     end
   end

@@ -37,12 +37,17 @@ module API
             authorize_in_project(:view_sprints, project: @project)
           end
 
-          get &::API::V3::Utilities::Endpoints::Index
-                 .new(
-                   model: Sprint,
-                   scope: -> { Sprint.for_project(@project).visible }
-                 )
-                 .mount
+          get do
+            index = ::API::V3::Utilities::Endpoints::Index.new(
+              model: Sprint,
+              scope: -> { Sprint.for_project(@project).visible },
+              self_path: -> { api_v3_paths.project_sprints(@project.id) }
+            )
+            query = index.parse(self)
+            result = index.render(self, query)
+            result.goal_project = @project
+            result
+          end
         end
       end
     end

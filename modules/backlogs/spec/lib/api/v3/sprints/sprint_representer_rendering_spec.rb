@@ -137,6 +137,30 @@ RSpec.describe API::V3::Sprints::SprintRepresenter, "rendering" do
       end
     end
 
+    describe "goal" do
+      context "without project context" do
+        it_behaves_like "property", :goal do
+          let(:value) { nil }
+        end
+      end
+
+      context "with project context and a goal set" do
+        let(:sprint) { create(:sprint, project: workspace) }
+        let(:workspace) { create(:project) }
+        let(:representer) do
+          described_class.new(sprint, current_user:, embed_links:, goal_project: workspace)
+        end
+
+        before do
+          create(:sprint_goal, sprint:, project: workspace, text: "Deliver MVP")
+        end
+
+        it "renders the goal text" do
+          expect(generated).to be_json_eql("Deliver MVP".to_json).at_path("goal")
+        end
+      end
+    end
+
     describe "createdAt" do
       it_behaves_like "has UTC ISO 8601 date and time" do
         let(:date) { sprint.created_at }
