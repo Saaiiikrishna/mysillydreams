@@ -31,7 +31,7 @@
 class Filters::Inputs::TextForm < Filters::Inputs::BaseFilterForm
   def add_operand(group)
     field_arguments = {
-      name: :"v-#{@filter.class.key}",
+      name: operand_name,
       label: @filter.human_name,
       visually_hide_label: true,
       scope_name_to_model: false,

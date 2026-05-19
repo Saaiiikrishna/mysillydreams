@@ -31,7 +31,7 @@
 class Filters::Inputs::BooleanForm < Filters::Inputs::BaseFilterForm
   def add_operand(group)
     group.segmented_control(
-      name: "#{@filter.name}_value",
+      name: operand_name,
       label: @filter.human_name,
       visually_hide_label: true,
       value: @filter.values.first,

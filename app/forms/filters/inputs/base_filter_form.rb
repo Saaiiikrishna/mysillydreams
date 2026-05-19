@@ -84,6 +84,10 @@ class Filters::Inputs::BaseFilterForm < ApplicationForm
     args
   end
 
+  def operand_name
+    "#{@filter.name}_value"
+  end
+
   private
 
   def add_operator(group)

@@ -33,10 +33,9 @@ class Filters::Inputs::ListForm < Filters::Inputs::BaseFilterForm
     filter_name = @filter.name
     filter_values = @filter.values || []
     items = @filter.allowed_values.map { |name, id| { name:, id: } }
-    field_id = "#{filter_name}_value"
 
     group.autocompleter(
-      name: field_id,
+      name: operand_name,
       label: :value,
       visually_hide_label: true,
       wrapper_classes: ["advanced-filters--filter-value"],
@@ -47,7 +46,7 @@ class Filters::Inputs::ListForm < Filters::Inputs::BaseFilterForm
       },
       autocomplete_options: {
         component: "opce-autocompleter",
-        id: field_id,
+        id: operand_name,
         multiple: true,
         multipleAsSeparateInputs: false,
         inputName: "value",
