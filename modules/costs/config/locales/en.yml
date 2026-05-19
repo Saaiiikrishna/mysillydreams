@@ -26,7 +26,6 @@
 # See COPYRIGHT and LICENSE files for more details.
 #++
 
----
 en:
   plugin_costs:
     name: "Time and costs"
