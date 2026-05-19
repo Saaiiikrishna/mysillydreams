@@ -31,6 +31,8 @@
 module Components
   module Common
     module Filters
+      include ::Components::Autocompleter::NgSelectAutocompleteHelpers
+
       def expect_filters_container_toggled
         expect(page).to have_css(".op-filters-form")
       end

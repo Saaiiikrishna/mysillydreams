@@ -101,20 +101,22 @@ export default class FiltersFormController extends Controller {
   });
 
   private boundListener:() => void;
+  private boundClearListener:(event:MouseEvent) => void;
 
   initialize() {
     // Initialize runs anytime an element with a controller connected to the DOM for the first time
     this.boundListener = debounce(this.sendForm.bind(this), 300);
+    this.boundClearListener = (event:MouseEvent) => this.clearInputWithButton(event);
   }
 
   connect() {
     const clearButton = document.getElementById(this.clearButtonIdValue);
-    clearButton?.addEventListener('click', (event:MouseEvent) => this.clearInputWithButton(event));
+    clearButton?.addEventListener('click', this.boundClearListener);
   }
 
   disconnect() {
     const clearButton = document.getElementById(this.clearButtonIdValue);
-    clearButton?.removeEventListener('click', (event:MouseEvent) => this.clearInputWithButton(event));
+    clearButton?.removeEventListener('click', this.boundClearListener);
   }
 
   addFilterSelectTargetConnected() {
