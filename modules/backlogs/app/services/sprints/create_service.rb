@@ -32,4 +32,40 @@ class Sprints::CreateService < BaseServices::Create
   def instance_class
     Sprint
   end
+
+  protected
+
+  def set_attributes_params(params)
+    super.except(:goal, :goal_project)
+  end
+
+  def after_perform(service_call)
+    super.tap do
+      persist_goal(service_call) if service_call.success?
+    end
+  end
+
+  private
+
+  def persist_goal(service_call)
+    goal_text = params[:goal]
+    return if goal_text.nil?
+
+    sprint = service_call.result
+    return if goal_text.blank?
+
+    sprint_goal = SprintGoal.new(sprint:, project: sprint.project, text: goal_text)
+    persist_sprint_goal(service_call, sprint_goal)
+  rescue ActiveRecord::RecordNotUnique
+    service_call.errors.add(:project_id, :project_already_has_goal)
+    service_call.success = false
+  end
+
+  def persist_sprint_goal(service_call, sprint_goal)
+    return if sprint_goal.save
+
+    service_call.merge!(
+      ServiceResult.failure(result: sprint_goal, errors: sprint_goal.errors)
+    )
+  end
 end

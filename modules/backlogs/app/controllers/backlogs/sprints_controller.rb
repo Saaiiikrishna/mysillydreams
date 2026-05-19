@@ -37,11 +37,14 @@ module Backlogs
                             create
                             refresh_form].freeze
     SPRINT_STATE_ACTIONS = %i[start finish].freeze
+    SHARED_SPRINT_EDIT_ACTIONS = %i[edit_dialog update refresh_form].freeze
 
     skip_before_action :load_sprint_and_project, only: NEW_SPRINT_ACTIONS
-    skip_before_action :authorize, only: SPRINT_STATE_ACTIONS
+    skip_before_action :authorize, only: SPRINT_STATE_ACTIONS + SHARED_SPRINT_EDIT_ACTIONS
 
     before_action :load_project, only: NEW_SPRINT_ACTIONS
+    before_action :load_sprint_for_edit, only: %i[edit_dialog refresh_form]
+    before_action :authorize_sprint_edit!, only: SHARED_SPRINT_EDIT_ACTIONS
     before_action :authorize_start!, only: :start
     before_action :authorize_finish!, only: :finish
 
@@ -52,18 +55,15 @@ module Backlogs
         contract_class: ::EmptyContract
       ).call(attributes: converted_sprint_params)
 
-      respond_with_dialog Backlogs::SprintDialogComponent.new(sprint: call.result)
+      respond_with_dialog Backlogs::SprintDialogComponent.new(sprint: call.result, project: @project)
     end
 
     def edit_dialog
-      @sprint = Sprint.for_project(@project).visible.find(params[:sprint_id])
-
-      respond_with_dialog Backlogs::SprintDialogComponent.new(sprint: @sprint, state: :edit)
+      respond_with_dialog Backlogs::SprintDialogComponent.new(sprint: @sprint, project: @project, state: :edit)
     end
 
     def refresh_form
-      id = edit_sprint_params.dig(:sprint, :id)
-      sprint = id.present? ? Sprint.for_project(@project).visible.find(id) : Sprint.new
+      sprint = @sprint || Sprint.new
 
       call = ::Sprints::SetAttributesService.new(
         user: current_user,
@@ -71,7 +71,7 @@ module Backlogs
         contract_class: ::EmptyContract
       ).call(attributes: converted_sprint_params)
 
-      update_via_turbo_stream(component: Backlogs::SprintFormComponent.new(sprint: call.result))
+      update_via_turbo_stream(component: Backlogs::SprintFormComponent.new(sprint: call.result, project: @project))
 
       respond_with_turbo_streams
     end
@@ -79,7 +79,7 @@ module Backlogs
     def create # rubocop:disable Metrics/AbcSize
       call = ::Sprints::CreateService
                .new(user: current_user)
-               .call(attributes: converted_sprint_params)
+               .call(attributes: converted_sprint_params, goal: goal_param)
 
       if call.success?
         flash[:notice] = I18n.t(:notice_successful_create)
@@ -93,7 +93,7 @@ module Backlogs
     def update
       call = ::Sprints::UpdateService
                .new(user: current_user, model: @sprint)
-               .call(attributes: sprint_params[:sprint])
+               .call(attributes: sprint_update_params, goal: goal_param, goal_project: @project)
 
       if call.success?
         render_success_flash_message_via_turbo_stream(message: I18n.t(:notice_successful_update))
@@ -145,6 +145,7 @@ module Backlogs
       update_via_turbo_stream(
         component: Backlogs::SprintFormComponent.new(
           sprint:,
+          project: @project,
           base_errors:
         ),
         status: :bad_request
@@ -168,18 +169,36 @@ module Backlogs
       @sprint = Sprint.for_project(@project).visible.find(sprint_id) if sprint_id
     end
 
-    def sprint_params
-      params.permit(sprint: %i[name start_date finish_date])
+    def load_sprint_for_edit
+      sprint_id = params[:sprint_id] || params.dig(:sprint, :id)
+      @sprint = Sprint.for_project(@project).visible.find(sprint_id) if sprint_id.present?
     end
 
-    def edit_sprint_params
-      params.permit(sprint: %i[id name start_date finish_date])
+    def authorize_sprint_edit!
+      if @sprint&.persisted?
+        can_edit_sprint = current_user.allowed_in_project?(:create_sprints, @sprint.project)
+        can_edit_goal = current_user.allowed_in_project?(:create_sprints, @project)
+        deny_access unless can_edit_sprint || can_edit_goal
+      else
+        deny_access unless current_user.allowed_in_project?(:create_sprints, @project)
+      end
+    end
+
+    def sprint_params
+      params.permit(sprint: %i[name start_date finish_date goal])
+    end
+
+    def goal_param
+      sprint_params.dig(:sprint, :goal)
+    end
+
+    def sprint_update_params
+      sprint_params[:sprint].except(:goal)
     end
 
     def converted_sprint_params
-      converted_params = sprint_params[:sprint].to_h
-      converted_params[:project] = @project
-
+      converted_params = sprint_params[:sprint].to_h.except(:goal)
+      converted_params[:project] = @project unless @sprint&.persisted?
       converted_params
     end
 

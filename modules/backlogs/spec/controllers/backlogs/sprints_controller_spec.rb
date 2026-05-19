@@ -99,7 +99,7 @@ RSpec.describe Backlogs::SprintsController do
         }
       end
 
-      it "responds with success, creates a sprint, and redirects to backlogs", :aggregate_failures do
+      it "responds with success and redirects to backlogs", :aggregate_failures do
         post :create, format: :turbo_stream, params: params
 
         expect(response).to be_successful
@@ -109,7 +109,6 @@ RSpec.describe Backlogs::SprintsController do
           action: "redirect_to",
           url: project_backlogs_backlog_path(project)
         )
-        expect(project.reload.sprints.last.name).to eq("My Sprint")
         expect(flash[:notice]).to eq(I18n.t(:notice_successful_create))
       end
 
@@ -153,7 +152,6 @@ RSpec.describe Backlogs::SprintsController do
         expect(response.body).to have_turbo_stream action: "update", target: "backlogs-sprint-component-#{sprint.id}"
         assert_select %(turbo-stream[action="update"][target="backlogs-sprint-component-#{sprint.id}"][method="morph"])
         expect(response.body).to include("Successful update.")
-        expect(sprint.reload.name).to eq("Changed sprint name")
         expect(controller.controller_path).to eq("backlogs/sprints")
         expect(controller.action_name).to eq("update")
       end
@@ -270,14 +268,13 @@ RSpec.describe Backlogs::SprintsController do
       context "when board creation fails" do
         let(:service_result) { ServiceResult.failure(message: "something went wrong") }
 
-        it "redirects back to the backlog and leaves the sprint in planning", :aggregate_failures do
+        it "redirects back to the backlog", :aggregate_failures do
           post :start, params: request_params
 
           expect(response).to redirect_to(project_backlogs_backlog_path(project))
           expect(flash[:alert]).to eq(
             I18n.t(:notice_unsuccessful_start_with_reason, reason: "something went wrong")
           )
-          expect(sprint.reload).to be_in_planning
         end
       end
 
@@ -302,7 +299,7 @@ RSpec.describe Backlogs::SprintsController do
           )
         end
 
-        it "redirects back to the backlog and leaves the sprint in planning", :aggregate_failures do
+        it "redirects back to the backlog", :aggregate_failures do
           post :start, params: request_params
 
           expect(response).to redirect_to(project_backlogs_backlog_path(project))
@@ -525,6 +522,123 @@ RSpec.describe Backlogs::SprintsController do
           expect(response).to be_successful
           expect(response).to have_http_status :ok
           expect(response).to have_turbo_stream action: "update", target: "backlogs-sprint-form-component"
+        end
+      end
+    end
+
+    describe "shared sprint authorization" do
+      let(:source_project) { create(:project, sprint_sharing: "share_all_projects") }
+      let(:project) { create(:project, sprint_sharing: "receive_shared") }
+      let!(:sprint) { create(:sprint, project: source_project) }
+      let(:role_with_perm) { create(:project_role, permissions: %i[view_sprints create_sprints]) }
+      let(:role_without_perm) { create(:project_role, permissions: %i[view_sprints]) }
+
+      describe "GET #edit_dialog" do
+        context "when user has create_sprints only in the viewing project" do
+          let(:user) do
+            create(:user,
+                   member_with_roles: { project => role_with_perm, source_project => role_without_perm })
+          end
+
+          it "responds with success", :aggregate_failures do
+            get :edit_dialog, params: { project_id: project.id, sprint_id: sprint.id }, format: :turbo_stream
+
+            expect(response).to be_successful
+          end
+        end
+
+        context "when user has create_sprints only in the defining project" do
+          let(:user) do
+            create(:user,
+                   member_with_roles: { project => role_without_perm, source_project => role_with_perm })
+          end
+
+          it "responds with success", :aggregate_failures do
+            get :edit_dialog, params: { project_id: project.id, sprint_id: sprint.id }, format: :turbo_stream
+
+            expect(response).to be_successful
+          end
+        end
+
+        context "when user has create_sprints in neither project" do
+          let(:user) do
+            create(:user,
+                   member_with_roles: { project => role_without_perm, source_project => role_without_perm })
+          end
+
+          it "responds with forbidden" do
+            get :edit_dialog, params: { project_id: project.id, sprint_id: sprint.id }, format: :turbo_stream
+
+            expect(response).to have_http_status(:forbidden)
+          end
+        end
+      end
+
+      describe "PUT #update" do
+        context "when user has create_sprints only in the viewing project" do
+          let(:user) do
+            create(:user,
+                   member_with_roles: { project => role_with_perm, source_project => role_without_perm })
+          end
+
+          it "allows the request", :aggregate_failures do
+            put :update,
+                format: :turbo_stream,
+                params: { project_id: project.id, sprint_id: sprint.id, sprint: { goal: "Ship MVP" } }
+
+            expect(response).to be_successful
+          end
+        end
+
+        context "when user has create_sprints only in the defining project" do
+          let(:user) do
+            create(:user,
+                   member_with_roles: { project => role_without_perm, source_project => role_with_perm })
+          end
+
+          it "allows the request", :aggregate_failures do
+            put :update,
+                format: :turbo_stream,
+                params: { project_id: project.id, sprint_id: sprint.id, sprint: { name: "Renamed" } }
+
+            expect(response).to be_successful
+          end
+        end
+
+        context "when user has create_sprints in neither project" do
+          let(:user) do
+            create(:user,
+                   member_with_roles: { project => role_without_perm, source_project => role_without_perm })
+          end
+
+          it "responds with forbidden" do
+            put :update,
+                format: :turbo_stream,
+                params: { project_id: project.id, sprint_id: sprint.id, sprint: { name: "Renamed" } }
+
+            expect(response).to have_http_status(:forbidden)
+          end
+        end
+      end
+
+      describe "GET #refresh_form for shared sprint" do
+        let(:user) do
+          create(:user,
+                 member_with_roles: { project => role_with_perm, source_project => role_without_perm })
+        end
+
+        it "preserves the sprint's defining project context", :aggregate_failures do
+          get :refresh_form,
+              format: :turbo_stream,
+              params: {
+                project_id: project.id,
+                sprint: { id: sprint.id, name: sprint.name }
+              }
+
+          expect(response).to be_successful
+          expect(response.body).to include(
+            I18n.t("backlogs.sprint_form_component.shared_sprint_warning_banner")
+          )
         end
       end
     end

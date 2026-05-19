@@ -31,7 +31,14 @@
 module Backlogs
   module Sprints
     class DatesForm < ApplicationForm
+      attr_reader :disabled
+
       delegate :active?, to: :model
+
+      def initialize(disabled: false)
+        @disabled = disabled
+        super()
+      end
 
       form do |f|
         f.group(layout: :horizontal) do |dates|
@@ -41,6 +48,7 @@ module Backlogs
             label: attribute_name(:start_date),
             placeholder: attribute_name(:start_date),
             required: active?,
+            disabled:,
             input_width: :small,
             data: {
               action: "change->refresh-on-form-changes#triggerTurboStream"
@@ -52,6 +60,7 @@ module Backlogs
             label: attribute_name(:finish_date),
             placeholder: attribute_name(:finish_date),
             required: active?,
+            disabled:,
             input_width: :small,
             data: {
               action: "change->refresh-on-form-changes#triggerTurboStream"
