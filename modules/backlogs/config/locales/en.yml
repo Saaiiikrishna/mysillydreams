@@ -48,6 +48,8 @@ en:
           in_planning: "In planning"
           active: "Active"
           completed: "Completed"
+      sprint_goal:
+        text: "Sprint goal"
       user_preference:
         backlogs_versions_default_fold_state: "Show sprints folded"
       work_package:
@@ -69,6 +71,8 @@ en:
             sprint_sharing:
               share_all_projects_already_taken: "cannot be set because project \"%{name}\" is already sharing with all projects."
               share_all_projects_already_taken_anonymous: "cannot be set because another project is already sharing with all projects."
+        sprint_goal:
+          project_already_has_goal: "already has a goal for this sprint."
         sprint:
           attributes:
             base:

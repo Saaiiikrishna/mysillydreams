@@ -130,6 +130,7 @@ RSpec.describe Sprint do
   describe "associations" do
     it { is_expected.to have_many(:work_packages).inverse_of(:sprint).dependent(:nullify) }
     it { is_expected.to have_many(:task_boards).dependent(:nullify) }
+    it { is_expected.to have_many(:goals).class_name("SprintGoal").inverse_of(:sprint).dependent(:delete_all) }
     it { is_expected.to belong_to(:project) }
   end
 
@@ -384,6 +385,36 @@ RSpec.describe Sprint do
       it "returns true for the owning project" do
         expect(unrelated_sprint.visible_to?(unrelated_project)).to be true
       end
+    end
+  end
+
+  describe "#goal_for" do
+    let(:sprint) { create(:sprint, project:) }
+    let!(:sprint_goal) { create(:sprint_goal, sprint:, project:, text: "Ship dashboard") }
+
+    it "returns the goal for the given project" do
+      expect(sprint.goal_for(project)).to eq(sprint_goal)
+    end
+
+    it "returns nil when no goal exists for the project" do
+      other_project = create(:project)
+      expect(sprint.goal_for(other_project)).to be_nil
+    end
+  end
+
+  describe "#goal_text_for" do
+    let(:sprint) { create(:sprint, project:) }
+
+    it "returns the goal text for the given project" do
+      create(:sprint_goal, sprint:, project:, text: "Ship dashboard")
+
+      expect(sprint.goal_text_for(project)).to eq("Ship dashboard")
+    end
+
+    it "returns nil when no goal exists for the project" do
+      other_project = create(:project)
+
+      expect(sprint.goal_text_for(other_project)).to be_nil
     end
   end
 
