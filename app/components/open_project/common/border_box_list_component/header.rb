@@ -56,10 +56,19 @@ module OpenProject
         # @!parse
         #   # Adds secondary content below the header title.
         #   #
+        #   # The content is wrapped in `Primer::Beta::Text` with muted text
+        #   # color by default. Pass Primer system arguments to adjust layout,
+        #   # spacing, or color for more structured descriptions.
+        #   #
+        #   # @param system_arguments [Hash] forwarded to `Primer::Beta::Text`.
         #   # @return [ViewComponent::Slot]
-        #   def with_description(&block)
+        #   def with_description(**system_arguments, &block)
         #   end
-        renders_one :description
+        renders_one :description, ->(**system_arguments) do
+          system_arguments[:color] ||= :muted
+
+          Primer::Beta::Text.new(**system_arguments)
+        end
 
         # @!parse
         #   # Adds a button to the header actions area.

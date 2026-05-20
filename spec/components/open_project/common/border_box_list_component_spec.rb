@@ -198,6 +198,23 @@ RSpec.describe OpenProject::Common::BorderBoxListComponent, type: :component do
       expect(rendered).to have_css(".op-border-box-list-header--description", text: "Some description")
     end
 
+    it "forwards system arguments to the description text" do
+      rendered = render_inline(
+        described_class.new(container: "hdr-description-args")
+      ) do |list|
+        list.with_header(title: "My title") do |header|
+          header.with_description(display: :flex, direction: :column, classes: "row-gap-2") do
+            "Some description"
+          end
+        end
+        list.with_item { "row" }
+      end
+
+      expect(rendered)
+        .to have_css(".op-border-box-list-header--description .d-flex.flex-column.row-gap-2.color-fg-muted",
+                     text: "Some description")
+    end
+
     it "renders multiple action buttons" do
       rendered = render_inline(
         described_class.new(container: "hdr-actions")
