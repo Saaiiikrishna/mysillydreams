@@ -339,7 +339,7 @@ module Pages
     def expect_sprint_heading_with_goal(sprint_name, goal_text)
       within(:section, sprint_name) do
         expect(page)
-          .to have_heading(sprint_name, level: 4, accessible_description: goal_text)
+          .to have_heading(sprint_name, level: 4, accessible_description: goal_text, exact: true)
       end
     end
 
