@@ -129,7 +129,7 @@ module OpenProject
         interactive: false,
         collapsible: false
       )
-        work_packages = WorkPackage.includes(:project).limit(2).to_a
+        work_packages = WorkPackage.includes(:project).limit(3).to_a
         return preview_message("No work packages in the database.") if work_packages.empty?
 
         render OpenProject::Common::BorderBoxListComponent.new(

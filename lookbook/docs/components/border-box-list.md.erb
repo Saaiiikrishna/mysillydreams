@@ -112,7 +112,9 @@ for card-specific layout, parameters, and slots.
 
 ### Empty state
 
-Use `with_empty_state` when the list can be rendered without items.
+Use `with_empty_state` when the list can be rendered without items. It renders a
+`Primer::Beta::Blankslate` under the hood, accepting `title:`, `description:`,
+and `icon:` keywords.
 
 <%= embed OpenProject::Common::BorderBoxListComponentPreview, :empty_state, panels: %i[source] %>
 
