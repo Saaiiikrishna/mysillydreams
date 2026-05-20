@@ -55,7 +55,7 @@ See COPYRIGHT and LICENSE files for more details.
         flex.with_row(mb: 3, classes: "FormControl-horizontalGroup--sm-vertical") do
           render Backlogs::Sprints::DatesForm.new(f, disabled: !can_edit_sprint?)
         end
-        flex.with_row(mb: 3) do
+        flex.with_row do
           render Backlogs::Sprints::GoalForm.new(
             f,
             project:,
