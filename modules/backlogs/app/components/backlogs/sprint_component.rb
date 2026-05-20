@@ -92,7 +92,9 @@ module Backlogs
     end
 
     def goal_text
-      sprint.goal_text_for(project)
+      return @goal_text if defined?(@goal_text)
+
+      @goal_text = sprint.goal_text_for(project)
     end
 
     def sprint_goal_id
