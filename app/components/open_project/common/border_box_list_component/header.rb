@@ -88,6 +88,7 @@ module OpenProject
                     :count_label,
                     :count_arguments,
                     :title_tag,
+                    :title_arguments,
                     :list_id,
                     :interactive,
                     :collapsed,
@@ -105,6 +106,7 @@ module OpenProject
         # @param count_arguments [Hash] forwarded to `Primer::Beta::Counter`.
         #   Values are merged over the default counter arguments.
         # @param title_tag [Symbol] tag used for the title heading.
+        # @param title_arguments [Hash] forwarded to the title heading.
         # @param list_id [String, nil] id of the collapsible list body.
         # @param interactive [Boolean] whether counter updates should be
         #   announced politely to assistive technology.
@@ -119,6 +121,7 @@ module OpenProject
           count_label: nil,
           count_arguments: {},
           title_tag: :h4,
+          title_arguments: {},
           list_id: nil,
           interactive: false,
           collapsed: false,
@@ -132,6 +135,7 @@ module OpenProject
           @count_label = count_label
           @count_arguments = count_arguments
           @title_tag = title_tag
+          @title_arguments = title_arguments.except(:tag)
           @list_id = list_id
           @interactive = interactive
           @collapsible_id = list_id
@@ -174,6 +178,11 @@ module OpenProject
             merged
           )
           merged
+        end
+
+        # @return [String] classes forwarded to the non-collapsible title.
+        def title_classes
+          class_names("Box-title", title_arguments[:classes])
         end
 
         # @return [String, nil] ids controlled by the collapsible header.

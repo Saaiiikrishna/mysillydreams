@@ -250,11 +250,23 @@ RSpec.describe Backlogs::SprintComponent, type: :component do
         it "renders the goal text" do
           expect(rendered_component).to have_text("Ship the reporting dashboard")
         end
+
+        it "describes the sprint heading with the goal text" do
+          expect(rendered_component).to have_heading(
+            "Sprint 1",
+            level: 4,
+            accessible_description: "Ship the reporting dashboard"
+          )
+        end
       end
 
       context "when the sprint has no goal for the project" do
         it "does not render goal text" do
           expect(rendered_component).to have_no_css(".d-block.color-fg-muted")
+        end
+
+        it "does not describe the sprint heading" do
+          expect(rendered_component).to have_css("h4", text: "Sprint 1", aria: { describedby: nil })
         end
       end
     end
