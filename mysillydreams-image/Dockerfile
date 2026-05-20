@@ -10,6 +10,16 @@ FROM openproject/openproject:17-slim AS msd-slim
 
 USER root
 
+# ── Modified source files from our repo ─────────────────────────────────────
+# These files are edited in the repo (git-tracked). We COPY them into the
+# image so our changes override the upstream openproject:17-slim versions.
+COPY config/static_links.yml              /app/config/static_links.yml
+COPY config/locales/en.yml               /app/config/locales/en.yml
+COPY config/locales/js-en.yml            /app/config/locales/js-en.yml
+COPY lib/open_project/static/links.rb    /app/lib/open_project/static/links.rb
+COPY app/views/user_mailer/test_mail.html.erb /app/app/views/user_mailer/test_mail.html.erb
+COPY app/views/user_mailer/test_mail.text.erb /app/app/views/user_mailer/test_mail.text.erb
+
 # ── Static brand asset replacement ──────────────────────────────────────────
 COPY mysillydreams-image/assets/logo_openproject.png           /app/public/assets/logo_openproject.png
 COPY mysillydreams-image/assets/logo_openproject_narrow.svg    /app/public/assets/logo_openproject_narrow.svg
