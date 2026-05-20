@@ -164,11 +164,7 @@ render OpenProject::Common::BorderBoxListComponent.new(
   padding: :condensed,
   collapsible: true
 ) do |list|
-  list.with_header(
-    title: "Project attributes",
-    title_arguments: { aria: { describedby: "project-attributes-description" } },
-    count: true
-  ) do |header|
+  list.with_header(title: "Project attributes", count: true) do |header|
     header.with_description(id: "project-attributes-description", font_size: :small) do
       "Visible in the project overview"
     end
