@@ -1,11 +1,11 @@
 #-- copyright
-# OpenProject is an open source project management software.
-# Copyright (C) the OpenProject GmbH
+# MySillyDreams is an open source project management software.
+# Copyright (C) the MySillyDreams GmbH
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License version 3.
 #
-# OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+# MySillyDreams is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
 # Copyright (C) 2006-2013 Jean-Philippe Lang
 # Copyright (C) 2010-2013 the ChiliProject Team
 #
@@ -29,9 +29,9 @@
 # English strings go here for Rails i18n
 en:
   plugin_openproject_meeting:
-    name: "OpenProject Meeting"
+    name: "MySillyDreams Meeting"
     description: >-
-      This module adds functions to support project meetings to OpenProject. Meetings can be
+      This module adds functions to support project meetings to MySillyDreams. Meetings can be
       scheduled selecting invitees from the same project to take part in the meeting. An agenda can
       be created and sent to the invitees. After the meeting, attendees can be selected and minutes
       can be created based on the agenda. Finally, the minutes can be sent to all attendees and

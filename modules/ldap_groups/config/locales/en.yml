@@ -3,9 +3,9 @@ en:
     upsell:
       ldap_groups:
         title: 'LDAP group synchronization'
-        description: 'Synchronize LDAP groups with OpenProject groups to manage users, change their permissions and facilitate user management across groups.'
+        description: 'Synchronize LDAP groups with MySillyDreams groups to manage users, change their permissions and facilitate user management across groups.'
   plugin_openproject_ldap_groups:
-    name: "OpenProject LDAP groups"
+    name: "MySillyDreams LDAP groups"
     description: "Synchronization of LDAP group memberships."
   activerecord:
     attributes:
@@ -34,7 +34,7 @@ en:
     label_synchronize: 'Synchronize'
     settings:
       name_attribute: 'LDAP groups name attribute'
-      name_attribute_text: 'The LDAP attribute used for naming the OpenProject group when created by a filter'
+      name_attribute_text: 'The LDAP attribute used for naming the MySillyDreams group when created by a filter'
 
     synchronized_filters:
       add_new: 'Add synchronized LDAP filter'
@@ -48,11 +48,11 @@ en:
         title: 'Remove synchronized filter %{name}'
         heading: 'Remove synchronized filter %{name}?'
         confirmation: "If you continue, the synchronized filter %{name} and all groups %{groups_count} created through it will be removed."
-        removed_groups: "Warning: This will remove the following groups from OpenProject and remove it from all projects!"
+        removed_groups: "Warning: This will remove the following groups from MySillyDreams and remove it from all projects!"
         verification_html: "Enter the filter name %{name} to verify the deletion."
       form:
-        group_name_attribute_text: 'Enter the attribute of the LDAP group used for setting the OpenProject group name.'
-        filter_string_text: 'Enter the RFC4515 LDAP filter that returns groups in your LDAP to synchronize with OpenProject.'
+        group_name_attribute_text: 'Enter the attribute of the LDAP group used for setting the MySillyDreams group name.'
+        filter_string_text: 'Enter the RFC4515 LDAP filter that returns groups in your LDAP to synchronize with MySillyDreams.'
         base_dn_text: >
           Enter the search base DN to use for this filter. It needs to be below the base DN of the selected LDAP connection.
 
@@ -64,10 +64,10 @@ en:
         title: 'Remove synchronized group %{name}'
         heading: 'Remove synchronized group %{name}?'
         confirmation: "If you continue, the synchronized group %{name} and all %{users_count} users synchronized through it will be removed."
-        info: "The OpenProject group itself and members added outside this LDAP synchronization will not be removed."
+        info: "The MySillyDreams group itself and members added outside this LDAP synchronization will not be removed."
       help_text_html: |
-        This module allows you to set up a synchronization between LDAP and OpenProject groups.
-        It depends on LDAP groups need to use the <em>groupOfNames / memberOf</em> attribute set to be working with OpenProject.
+        This module allows you to set up a synchronization between LDAP and MySillyDreams groups.
+        It depends on LDAP groups need to use the <em>groupOfNames / memberOf</em> attribute set to be working with MySillyDreams.
         <br/>
         Groups are synchronized hourly through a cron job.
         [Please see our documentation on this topic](docs_url).
@@ -79,9 +79,9 @@ en:
       form:
         auth_source_text: 'Select which LDAP connection should be used.'
         sync_users_text: >
-          If you enable this option, found users will also be automatically created in OpenProject.
-          Without it, only existing accounts in OpenProject will be added to groups.
+          If you enable this option, found users will also be automatically created in MySillyDreams.
+          Without it, only existing accounts in MySillyDreams will be added to groups.
         dn_text: 'Enter the full DN of the group in LDAP'
-        group_text: 'Select an existing OpenProject group that members of the LDAP group shall be synchronized with'
+        group_text: 'Select an existing MySillyDreams group that members of the LDAP group shall be synchronized with'
       upsell:
         description: 'Take advantage of synchronised LDAP groups to manage users, change their permissions and facilitate user management across groups.'

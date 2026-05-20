@@ -28,7 +28,7 @@ en:
               greater_than_start_date: "must be after the start date."
 
   plugin_openproject_resource_management:
-    name: "OpenProject Resource Management"
+    name: "MySillyDreams Resource Management"
     description: "Provides resource management and capacity planning."
 
   project_module_resource_management: "Resource management"

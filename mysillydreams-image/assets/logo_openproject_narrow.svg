@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 50" width="180" height="50">
+  <rect width="180" height="50" fill="none"/>
+  <!-- Dream bubble icon -->
+  <circle cx="25" cy="25" r="18" fill="#5C2D91"/>
+  <circle cx="19" cy="22" r="5" fill="white" opacity="0.9"/>
+  <circle cx="28" cy="17" r="7" fill="white" opacity="0.9"/>
+  <circle cx="32" cy="26" r="5" fill="white" opacity="0.9"/>
+  <circle cx="22" cy="30" r="4" fill="white" opacity="0.9"/>
+  <!-- Text -->
+  <text x="52" y="20" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#1E0A3C">MySilly</text>
+  <text x="52" y="36" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#5C2D91">Dreams</text>
+</svg>
