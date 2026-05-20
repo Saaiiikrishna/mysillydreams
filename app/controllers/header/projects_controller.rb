@@ -55,7 +55,15 @@ class Header::ProjectsController < ApplicationController
 
   def load_projects
     projects = base_scope.to_a
-    ensure_current_project_present(projects)
+    projects = ensure_current_project_present(projects)
+
+    if query.present? && projects.any?
+      @matching_ids = projects.to_set(&:id)
+      ancestors = ancestor_scope_for(projects).to_a
+      projects = (projects + ancestors).uniq(&:id).sort_by(&:lft)
+    end
+
+    projects
   end
 
   def base_scope
@@ -66,7 +74,7 @@ class Header::ProjectsController < ApplicationController
   end
 
   def ensure_current_project_present(projects)
-    return projects if query.present? || @current_project_id.blank?
+    return projects if query.present? || filter_mode == "favorited" || @current_project_id.blank?
     return projects if projects.any? { |p| p.id == @current_project_id }
 
     current = Project.visible.active.find_by(id: @current_project_id)
@@ -75,24 +83,40 @@ class Header::ProjectsController < ApplicationController
     (projects + current.self_and_ancestors.active.to_a).uniq(&:id).sort_by(&:lft)
   end
 
+  # Returns a scope for all visible, active ancestors of the given projects
+  # that are not already in the given list.
+  def ancestor_scope_for(projects)
+    project_ids = projects.map(&:id)
+    condition = projects.map do |p|
+      Project.arel_table[:lft].lt(p.lft).and(Project.arel_table[:rgt].gt(p.rgt))
+    end.reduce(:or)
+
+    Project.visible.active.where(condition).where.not(id: project_ids)
+  end
+
   def favorite_project_ids
-    Favorite.where(favorited_type: "Project", user_id: User.current.id).select(:favorited_id)
+    user_project_favorites.select(:favorited_id)
   end
 
   def load_favorited_ids
     return Set.new unless User.current.logged?
 
-    Favorite
-      .where(favorited_type: "Project", user_id: User.current.id, favorited_id: @projects.map(&:id))
+    user_project_favorites
+      .where(favorited_id: @projects.map(&:id))
       .pluck(:favorited_id)
       .to_set
   end
 
+  def user_project_favorites
+    @user_project_favorites ||= Favorite.where(favorited_type: "Project", user_id: User.current.id)
+  end
+
   # Builds a nested structure from a flat, lft-ordered list of projects.
-  # Projects whose parent is not in the result set appear as roots.
   # Each level is sorted alphabetically by project name.
   def build_tree(projects)
-    nodes = projects.index_by(&:id).transform_values { |p| { project: p, children: [] } }
+    nodes = projects.index_by(&:id).transform_values do |p|
+      { project: p, children: [], matches_query: @matching_ids.nil? || @matching_ids.include?(p.id) }
+    end
 
     roots = []
     projects.each do |project|

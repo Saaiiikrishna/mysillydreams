@@ -33,6 +33,8 @@ See COPYRIGHT and LICENSE files for more details.
 <% is_favorited = favorited_ids.include?(project.id) %>
 <% href = jump.present? ? project_path(project.identifier, jump:) : project_path(project.identifier) %>
 <% is_expanded = node[:expanded] %>
+<% label = project_node_label(project, favorited: is_favorited) %>
+<% matches_query = node[:matches_query] %>
 
 <% add_icons = ->(tree_node) do
      if is_current
@@ -44,18 +46,16 @@ See COPYRIGHT and LICENSE files for more details.
          aria: { label: t("header_project_select.leave_project") }
        )
      end
-     if is_favorited
-       tree_node.with_trailing_visual_icon(icon: :"star-fill", classes: "op-primer--star-icon")
-     end
    end %>
 
 <% if children.any? %>
   <% component.with_sub_tree(
-       label: project.name,
+       label:,
        select_variant: :none,
        current: is_current,
        expanded: is_expanded,
        href:,
+       disabled: !matches_query,
        data: { node_id: project.id }
      ) do |sub| %>
     <% add_icons.call(sub) %>
@@ -70,10 +70,11 @@ See COPYRIGHT and LICENSE files for more details.
   <% end %>
 <% else %>
   <% component.with_leaf(
-       label: project.name,
+       label:,
        select_variant: :none,
        current: is_current,
        href:,
+       disabled: !matches_query,
        data: { node_id: project.id }
      ) do |leaf| %>
     <% add_icons.call(leaf) %>
