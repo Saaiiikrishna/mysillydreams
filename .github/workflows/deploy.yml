@@ -1,0 +1,56 @@
+name: Build & Deploy MySillyDreams
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  IMAGE: aryaprodacr.azurecr.io/mysillydreams/openproject
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted   # Self-hosted runner on mysillydreams-vm
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Azure Container Registry
+        run: |
+          docker login aryaprodacr.azurecr.io \
+            -u "${{ secrets.ACR_USERNAME }}" \
+            -p "${{ secrets.ACR_PASSWORD }}"
+
+      - name: Build MySillyDreams image
+        run: |
+          DOCKER_BUILDKIT=1 docker build \
+            --target msd-slim \
+            --cache-from "${{ env.IMAGE }}:buildcache" \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            -t "${{ env.IMAGE }}:${{ github.sha }}" \
+            -t "${{ env.IMAGE }}:latest" \
+            -f mysillydreams-image/Dockerfile \
+            .
+
+      - name: Push image to ACR
+        run: |
+          docker push "${{ env.IMAGE }}:${{ github.sha }}"
+          docker push "${{ env.IMAGE }}:latest"
+          # Also push build cache layer for faster subsequent builds
+          DOCKER_BUILDKIT=1 docker build \
+            --target msd-slim \
+            --cache-from "${{ env.IMAGE }}:buildcache" \
+            --cache-to type=inline \
+            -t "${{ env.IMAGE }}:buildcache" \
+            -f mysillydreams-image/Dockerfile \
+            . || true
+          docker push "${{ env.IMAGE }}:buildcache" || true
+
+      - name: Deploy — rolling restart web & worker
+        run: |
+          cd /data/mysillydreams
+          docker compose pull web worker
+          docker compose up -d --no-deps web worker
+          docker image prune -f
+          echo "Deployed ${{ github.sha }} at $(date -u)"

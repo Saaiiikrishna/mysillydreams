@@ -47,9 +47,9 @@ en:
         provider_configured: Configuration complete
       errors:
         not_configured: The connection could not be validated. Please finish configuration first.
-        xwiki_oauth_connection_error: OpenProject could not connect to the configured XWiki instance.
+        xwiki_oauth_connection_error: MySillyDreams could not connect to the configured XWiki instance.
         xwiki_oauth_request_error: An unexpected error occured when trying to communicate with the XWiki instance.
-        xwiki_oauth_token_missing: OpenProject cannot test the user-level communication with XWiki as the user did not yet connect their XWiki account.
+        xwiki_oauth_token_missing: MySillyDreams cannot test the user-level communication with XWiki as the user did not yet connect their XWiki account.
         xwiki_oauth_unauthorized: The user token was not recognized by XWiki.
     work_package_wikis_tab_component:
       inline_page_links: Inline page links
@@ -61,7 +61,7 @@ en:
       empty_text: Manually add links to other related wiki pages.
     oauth_login_component:
       heading: Not connected to %{provider}
-      description: Log in to %{provider} to view and manage related wiki pages from this OpenProject instance.
+      description: Log in to %{provider} to view and manage related wiki pages from this MySillyDreams instance.
       connect_button: Connect %{provider} account
     admin:
       destroy_confirmation_dialog_component:
@@ -91,7 +91,7 @@ en:
       oauth_application_info_component:
         confirm_replace_oauth_application: This action will reset the current OAuth credentials. After confirming you will have to reenter the credentials in your XWiki instance and all users will have to reauthorize. Are you sure you want to proceed?
         label_pending: Pending
-        replace_oauth_application: Replace OpenProject OAuth application
+        replace_oauth_application: Replace MySillyDreams OAuth application
       oauth_client_info_component:
         confirm_replace_oauth_client: This action will reset the current XWiki OAuth credentials. All users will need to reauthorize against XWiki. Are you sure you want to proceed?
         label_pending: Pending
@@ -109,7 +109,7 @@ en:
         no_results_description: Add a wiki provider to see them here.
         no_results_title: You don't have any wiki providers set up yet.
       wiki_providers:
-        index_description: Add an external wiki service to link work packages to existing wiki pages or create new ones directly from OpenProject.
+        index_description: Add an external wiki service to link work packages to existing wiki pages or create new ones directly from MySillyDreams.
         label_add_new: Add new wiki provider
         label_edit: Edit XWiki provider
         label_new_xwiki_instance: New XWiki provider
@@ -118,7 +118,7 @@ en:
         name_placeholder: XWiki knowledge base
         new_provider_html: Read our documentation on [setting up an XWiki integration](docs_url) for more information.
         oauth:
-          openproject_oauth: OpenProject OAuth
+          openproject_oauth: MySillyDreams OAuth
         sections:
           general_information: Basic details
           oauth_configuration: OAuth configuration
@@ -126,11 +126,11 @@ en:
         xwiki_instance: XWiki Instance
         xwiki:
           oauth:
-            openproject_oauth_description: Allow XWiki to access OpenProject data using an OAuth application. Copy the credentials below into your XWiki instance.
+            openproject_oauth_description: Allow XWiki to access MySillyDreams data using an OAuth application. Copy the credentials below into your XWiki instance.
             provider_oauth: XWiki OAuth
-            provider_oauth_description: Allow OpenProject to access XWiki data using OAuth. A client ID is automatically generated to identify OpenProject to XWiki — no manual configuration is needed on the XWiki side.
-          openproject_oauth_description: Allow XWiki to access OpenProject data using an OAuth.
+            provider_oauth_description: Allow MySillyDreams to access XWiki data using OAuth. A client ID is automatically generated to identify MySillyDreams to XWiki — no manual configuration is needed on the XWiki side.
+          openproject_oauth_description: Allow XWiki to access MySillyDreams data using an OAuth.
           xwiki_oauth: XWiki OAuth
-          xwiki_oauth_description: Allow OpenProject to access XWiki data using an OAuth.
+          xwiki_oauth_description: Allow MySillyDreams to access XWiki data using an OAuth.
     macro:
       page_not_found: Linked wiki page no longer available

@@ -1,11 +1,11 @@
 #-- copyright
-# OpenProject is an open source project management software.
-# Copyright (C) the OpenProject GmbH
+# MySillyDreams is an open source project management software.
+# Copyright (C) the MySillyDreams GmbH
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License version 3.
 #
-# OpenProject is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
+# MySillyDreams is a fork of ChiliProject, which is a fork of Redmine. The copyright follows:
 # Copyright (C) 2006-2013 Jean-Philippe Lang
 # Copyright (C) 2010-2013 the ChiliProject Team
 #
@@ -66,7 +66,7 @@ en:
         can be requested.
       last_backup: Last backup
       last_backup_from: Last backup from
-      title: Backup OpenProject
+      title: Backup MySillyDreams
       options: Options
       include_attachments: Include attachments
       download_backup: Download backup
@@ -536,7 +536,7 @@ en:
         next: "Next"
         got_it: "Got it"
       steps:
-        help_menu: "The Help (?) menu provides <b>additional help resources</b>. Here you can find a user guide, helpful how-to videos and more. <br> Enjoy your work with OpenProject!"
+        help_menu: "The Help (?) menu provides <b>additional help resources</b>. Here you can find a user guide, helpful how-to videos and more. <br> Enjoy your work with MySillyDreams!"
         members: "Invite new <b>members</b> to join your project."
         quick_add_button: "Click on the plus (+) icon in the header navigation to <b>create a new project</b> or to <b>invite coworkers</b>."
         sidebar_arrow: "Use the return arrow in the top left corner to return to the project’s <b>main menu</b>."
