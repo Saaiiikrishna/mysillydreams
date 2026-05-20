@@ -262,7 +262,7 @@ RSpec.describe Backlogs::SprintComponent, type: :component do
 
       context "when the sprint has no goal for the project" do
         it "does not render goal text" do
-          expect(rendered_component).to have_no_css(".d-block.color-fg-muted")
+          expect(rendered_component).to have_no_css("#sprint_#{sprint.id}_goal")
         end
 
         it "does not describe the sprint heading" do
