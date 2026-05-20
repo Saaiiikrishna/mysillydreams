@@ -44,13 +44,34 @@ comparable lists should use headers.
 
 | Slot | Description |
 |---|---|
-| `with_header` | Optional section header with title, count, description, action buttons, and menu. Pass `title_arguments:` to customize the heading |
+| `with_header` | Optional section header. See [Header parameters](#header-parameters) and [Header slots](#header-slots) below |
 | `with_item` | Generic list row that renders the provided block content |
 | `with_work_package_item` | Work package row that renders a work package card |
 | `with_empty_state` | Empty-state content rendered when no items are present |
 | `with_footer` | Optional footer row below the list items |
 
 ## Header
+
+### Header parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `title` | `String` | required | Header title |
+| `title_tag` | `Symbol` | `:h4` | HTML tag for the title heading |
+| `title_arguments` | `Hash` | `{}` | Forwarded to the title heading element |
+| `count` | `Integer`, `Boolean`, `nil` | `nil` | Pass `true` to infer the rendered item count, an integer for an explicit value, or `nil`/`false` to hide it |
+| `count_arguments` | `Hash` | `{}` | Forwarded to `Primer::Beta::Counter`. Merged over defaults (`scheme: :primary`, `hide_if_zero: true`) |
+| `collapsed` | `Boolean` | `false` | Whether a collapsible header starts closed |
+
+### Header slots
+
+| Slot | Description |
+|---|---|
+| `with_description` | Secondary content below the title, wrapped in `Primer::Beta::Text` with muted color by default. Accepts Primer system arguments |
+| `with_action_button` | Button rendered in the header actions area |
+| `with_menu` | Action menu rendered in the header actions area. Pass `button_aria_label:` for the trigger button |
+
+### Collapsible headers
 
 Collapsible headers add:
 
