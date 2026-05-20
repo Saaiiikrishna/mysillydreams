@@ -23,7 +23,11 @@ COPY mysillydreams-image/assets/favicon.ico                    /app/public/favic
 # but this find+sed covers every locale file (incl. modules & Crowdin translations)
 # in case the base image is updated with new strings.
 RUN find /app/config/locales /app/modules -name "*.yml" -exec \
-    sed -i 's/OpenProject/MySillyDreams/g' {} \;
+    sed -i \
+      -e 's/OpenProject/MySillyDreams/g' \
+      -e 's|https://www\.openproject\.org|https://mysillydreams.com|g' \
+      -e 's|https://community\.openproject\.org|https://mysillydreams.com/community|g' \
+    {} \;
 
 # ── Fix ownership ────────────────────────────────────────────────────────────
 RUN chown app:app \
