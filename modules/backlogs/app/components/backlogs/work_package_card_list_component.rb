@@ -81,6 +81,9 @@ module Backlogs
       **system_arguments,
       &
     )
+      system_arguments[:title_arguments] ||= {}
+      system_arguments[:title_arguments][:font_size] ||= 4
+
       @list.with_header(
         title:,
         count:,
