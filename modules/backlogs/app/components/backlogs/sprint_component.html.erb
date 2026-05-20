@@ -45,7 +45,7 @@ See COPYRIGHT and LICENSE files for more details.
     <% list.with_header(title: sprint.name) do |header| %>
       <% header.with_description(display: :flex, direction: :column, classes: "row-gap-2") do %>
         <% if goal_text.present? %>
-          <%= render(Primer::Beta::Text.new(color: :muted, display: :block, mr: 2)) do %>
+          <%= render(Primer::Beta::Text.new(color: :muted, mr: 2, classes: "line-clamp-3")) do %>
             <%= goal_text %>
           <% end %>
         <% end %>
