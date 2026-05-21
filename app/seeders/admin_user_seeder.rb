@@ -69,7 +69,7 @@ class AdminUserSeeder < Seeder
   end
 
   def user_name_parts(name)
-    return %w[OpenProject Admin] if name.blank?
+    return %w[MySillyDreams Admin] if name.blank?
 
     if name.include?(" ")
       name.split(" ", 2)

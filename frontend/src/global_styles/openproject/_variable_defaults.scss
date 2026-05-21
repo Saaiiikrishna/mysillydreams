@@ -29,11 +29,12 @@
 
 // use CSS4 variables for easier theming
 :root {
-  --primary-button-color: #1F883D;
-  --primary-button-color--major1: #197032;
-  --primary-button-color--minor1: #d2e7d8;
-  --primary-button-color--minor2: #a5cfb1;
-  --primary-button-color--dark-mode: #238636;
+  // MySillyDreams brand overrides — maps MSD tokens onto OP's CSS variable system
+  --primary-button-color: var(--msd-brand-accent);
+  --primary-button-color--major1: var(--msd-brand-accent-hover);
+  --primary-button-color--minor1: rgba(124, 58, 237, 0.2);
+  --primary-button-color--minor2: rgba(124, 58, 237, 0.35);
+  --primary-button-color--dark-mode: var(--msd-brand-accent);
 
   --control-checked-color: var(--accent-color);
   --control-checked-color--major1: var(--accent-color--major1);
@@ -49,7 +50,7 @@
    */
 
   --app-height: 100vh;
-  --body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --body-font-family: var(--msd-font);
   --body-font-size: var(--text-body-size-medium);
 
   --gray: #EAEAEA;
@@ -61,34 +62,34 @@
   --base-line-height: 1.5;
   --base-text-weight-bold: 600;
   --secondary-color: #bfbfbf;
-  --accent-color: #1A67A3;
-  --accent-color--major1: #155282;
-  --accent-color--major2: #103e62;
-  --accent-color--minor1: #d1e1ed;
-  --accent-color--minor2: #a3c2da;
-  --accent-color--dark-mode: #4493f8;
+  --accent-color: var(--msd-brand-accent);
+  --accent-color--major1: var(--msd-brand-accent-hover);
+  --accent-color--major2: var(--msd-brand-primary);
+  --accent-color--minor1: rgba(124, 58, 237, 0.15);
+  --accent-color--minor2: rgba(124, 58, 237, 0.3);
+  --accent-color--dark-mode: var(--msd-brand-accent);
   --font-color-on-primary: #FFFFFF;
   --list-side-margin: 40px;
   --header-height: 55px;
-  --header-bg-color: #1A67A3;
-  --header-border-bottom-color: #155282;
+  --header-bg-color: var(--msd-brand-dark);
+  --header-border-bottom-color: rgba(255, 255, 255, 0.1);
   --header-border-bottom-width: 0;
   --header-item-font-size: 14px;
   --header-item-font-color: #FFFFFF;
   --header-item-font-hover-color: #FFFFFF;
   --main-menu-toggler-top-spacing: 18px;
   --main-menu-toggler-z-index: 550;
-  --main-menu-width: 280px;
-  --main-menu-x-spacing: 12px;
+  --main-menu-width: 240px;
+  --main-menu-x-spacing: 10px;
   --main-menu-folded-width: 0px;
-  --main-menu-border-color: #EAEAEA;
+  --main-menu-border-color: rgba(255, 255, 255, 0.08);
   --main-menu-border-width: 1px;
   --main-menu-item-height: 36px;
-  --main-menu-bg-color: #FFFFFF;
-  --main-menu-bg-selected-background: #175A8E;
-  --main-menu-font-color: var(--body-font-color);
-  --main-menu-resizer-color: var(--main-menu-border-color);
-  --main-menu-selected-font-color: var(--main-menu-font-color);
+  --main-menu-bg-color: var(--msd-sidebar-bg);
+  --main-menu-bg-selected-background: rgba(124, 58, 237, 0.3);
+  --main-menu-font-color: rgba(255, 255, 255, 0.75);
+  --main-menu-resizer-color: rgba(255, 255, 255, 0.12);
+  --main-menu-selected-font-color: #FFFFFF;
   --main-menu-font-size: 14px;
   --main-menu-hover-border-color: transparent;
   --main-menu-bg-selected-border: transparent;

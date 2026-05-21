@@ -1,0 +1,46 @@
+// MySillyDreams Design Tokens
+// Brand color system — Jira/Linear-grade dark sidebar + clean content area
+
+:root {
+  // Brand palette
+  --msd-brand-primary: #5C2D91;
+  --msd-brand-dark: #1E0A3C;
+  --msd-brand-accent: #7C3AED;
+  --msd-brand-accent-hover: #6D28D9;
+  --msd-brand-accent-muted: rgba(124, 58, 237, 0.15);
+
+  // Sidebar
+  --msd-sidebar-bg: #1E0A3C;
+  --msd-sidebar-width: 240px;
+  --msd-sidebar-item-color: rgba(255, 255, 255, 0.75);
+  --msd-sidebar-item-hover-bg: rgba(255, 255, 255, 0.08);
+  --msd-sidebar-item-active-bg: rgba(124, 58, 237, 0.3);
+  --msd-sidebar-item-active-color: #FFFFFF;
+  --msd-sidebar-section-color: rgba(255, 255, 255, 0.4);
+
+  // Topbar
+  --msd-topbar-height: 56px;
+  --msd-topbar-bg: #FFFFFF;
+  --msd-topbar-border: #E5E7EB;
+
+  // Surfaces
+  --msd-surface: #FFFFFF;
+  --msd-surface-muted: #F9FAFB;
+  --msd-surface-hover: #F3F4F6;
+  --msd-border: #E5E7EB;
+  --msd-border-focus: #7C3AED;
+
+  // Typography
+  --msd-text-primary: #111827;
+  --msd-text-secondary: #374151;
+  --msd-text-muted: #6B7280;
+  --msd-text-disabled: #9CA3AF;
+  --msd-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  // Utility
+  --msd-radius-sm: 4px;
+  --msd-radius-md: 8px;
+  --msd-radius-lg: 12px;
+  --msd-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --msd-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
