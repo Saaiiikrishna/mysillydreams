@@ -19,6 +19,9 @@ COPY config/locales/js-en.yml            /app/config/locales/js-en.yml
 COPY lib/open_project/static/links.rb    /app/lib/open_project/static/links.rb
 COPY app/views/user_mailer/test_mail.html.erb /app/app/views/user_mailer/test_mail.html.erb
 COPY app/views/user_mailer/test_mail.text.erb /app/app/views/user_mailer/test_mail.text.erb
+COPY app/views/custom_styles/_inline_css_logo.erb /app/app/views/custom_styles/_inline_css_logo.erb
+COPY app/views/common/_favicons.html.erb          /app/app/views/common/_favicons.html.erb
+COPY app/seeders/admin_user_seeder.rb             /app/app/seeders/admin_user_seeder.rb
 
 # ── Static brand asset replacement ──────────────────────────────────────────
 COPY mysillydreams-image/assets/logo_openproject.png           /app/public/assets/logo_openproject.png
