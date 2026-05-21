@@ -22,6 +22,7 @@ COPY app/views/user_mailer/test_mail.text.erb /app/app/views/user_mailer/test_ma
 COPY app/views/custom_styles/_inline_css_logo.erb /app/app/views/custom_styles/_inline_css_logo.erb
 COPY app/views/common/_favicons.html.erb          /app/app/views/common/_favicons.html.erb
 COPY app/seeders/admin_user_seeder.rb             /app/app/seeders/admin_user_seeder.rb
+COPY config/initializers/mysillydreams_settings.rb /app/config/initializers/mysillydreams_settings.rb
 
 # ── Static brand asset replacement ──────────────────────────────────────────
 COPY mysillydreams-image/assets/logo_openproject.png           /app/public/assets/logo_openproject.png
