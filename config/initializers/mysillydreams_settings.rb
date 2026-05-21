@@ -2,22 +2,23 @@
 
 # ── Part 1: runs at initializer load time, BEFORE Settings::Definition.add_all ──
 #
-# OpenProject calls Settings::Definition.add_all in config.after_initialize.
-# add_all calls override_value_from_env for every setting; when it finds
-# OPENPROJECT_MAIL__FROM in ENV it calls definition.override_value which sets
-# writable = false — locking the field in the UI and raising NotWritableError
-# on any Setting.mail_from= call.
+# Capture the env-var value BEFORE deleting it. This is critical: if the env
+# var was the only authoritative source for the email address (DB row absent or
+# defaulted to openproject@example.net), we must persist it to the DB or mail
+# delivery will break after we clear the env var.
 #
-# Clearing the env var here (outside any block) runs before after_initialize,
-# so add_all never sees the override, mail_from stays writable, and the
-# Administration → Email settings field is fully editable by the super admin.
-%w[OPENPROJECT_MAIL__FROM OPENPROJECT_MAIL_FROM].each { |k| ENV.delete(k) }
+# We clear the env var so that Settings::Definition.add_all (called in
+# after_initialize) never marks mail_from as writable=false, which would lock
+# the UI field and make Setting.mail_from= raise NotWritableError.
+MSD_ENV_MAIL_FROM = %w[OPENPROJECT_MAIL__FROM OPENPROJECT_MAIL_FROM]
+                    .map { |k| ENV.delete(k) }
+                    .compact
+                    .first
 
 # ── Part 2: runs after Rails + DB are fully loaded ───────────────────────────
 #
-# Update the stale display name in the settings table once, preserving whatever
-# email address is already configured. Uses update_all (raw SQL path) so it
-# works even if the setting was previously marked non-writable in the DB row.
+# Ensures the DB always has a valid mail_from value and applies the display
+# name rename (MySillyDreams → Octaleads). Idempotent after first run.
 Rails.application.config.after_initialize do
   has_table = begin
     ActiveRecord::Base.connection.table_exists?(:settings)
@@ -26,15 +27,38 @@ Rails.application.config.after_initialize do
   end
   next unless has_table
 
-  row = ActiveRecord::Base.connection
-                          .select_one("SELECT value FROM settings WHERE name = 'mail_from'")
-  current = row&.fetch("value", nil).to_s
-  next unless current.include?("MySillyDreams Notifications")
+  row     = ActiveRecord::Base.connection
+                              .select_one("SELECT value FROM settings WHERE name = 'mail_from'")
+  db_val  = row&.fetch("value", nil).to_s
 
-  updated = current.gsub("MySillyDreams Notifications", "Octaleads Notifications")
-  Setting.where(name: "mail_from").update_all(value: updated)
-  Setting.clear_cache
-  Rails.logger.info "[MSD] mail_from updated → #{updated}"
+  # If the DB has no row or only has the upstream default, seed it from the
+  # env var we captured above so the real address is not lost.
+  base = if db_val.present? && db_val != "openproject@example.net"
+           db_val
+         elsif MSD_ENV_MAIL_FROM.present?
+           MSD_ENV_MAIL_FROM
+         else
+           db_val
+         end
+
+  # Apply display name rename
+  target = base.gsub("MySillyDreams Notifications", "Octaleads Notifications")
+
+  if target == db_val
+    # Already correct — nothing to do
+  elsif row
+    Setting.where(name: "mail_from").update_all(value: target)
+    Setting.clear_cache
+    Rails.logger.info "[MSD] mail_from updated → #{target}"
+  else
+    conn = ActiveRecord::Base.connection
+    conn.execute(
+      "INSERT INTO settings (name, value, updated_at) VALUES " \
+      "('mail_from', #{conn.quote(target)}, NOW())"
+    )
+    Setting.clear_cache
+    Rails.logger.info "[MSD] mail_from inserted → #{target}"
+  end
 rescue StandardError => e
   Rails.logger.warn "[MSD] mail_from update failed: #{e.message}"
 end
